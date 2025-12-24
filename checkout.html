@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AQUAWAVE Motors — Payout</title>
+<style>
+:root{
+  --accent:#ec407a; /* AQUAWAVE theme accent (boat site) */
+  --accent-dark:#c63b6f;
+  --bg:#fff;
+  --muted:#6b7280;
+  --card:#f6f9f8;
+  --text:#0f1724;
+  --muted-light:#e6efec;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:980px;margin:28px auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.logo{font-weight:800;color:var(--accent);font-size:1.15rem}
+.card{background:var(--card);padding:14px;border-radius:12px;border:1px solid var(--muted-light)}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+@media(max-width:980px){ .grid{grid-template-columns:1fr} }
+.h2{font-size:1.1rem;color:var(--accent);margin:0 0 10px}
+.order-items{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:8px;border-radius:8px;background:#fff;border:1px solid var(--muted-light)}
+.item .meta{font-size:0.95rem;color:var(--muted)}
+.summary-row{display:flex;justify-content:space-between;padding:8px 0;color:var(--muted)}
+.total{font-weight:900;font-size:1.25rem}
+.pay-options{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.pay-item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;border:1px solid var(--muted-light);background:#fff;cursor:pointer}
+.pay-item.selected{border-color:var(--accent);box-shadow:0 8px 24px rgba(236,64,122,0.06)}
+.small{font-size:13px;color:var(--muted)}
+.addr-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.addr{background:#f8fffd;padding:10px;border-radius:8px;border:1px dashed #dff5ee;word-break:break-all}
+.copy-btn{background:var(--accent);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+.actions{display:flex;gap:10px;align-items:center;margin-top:12px}
+.btn{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn-ghost{background:transparent;border:1px solid var(--muted-light);padding:8px 12px;border-radius:10px;cursor:pointer}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111;color:#fff;padding:10px 14px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.visible{opacity:1;pointer-events:auto}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.kv{font-weight:700}
+
+/* Other modal */
+#other-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 9999; background: rgba(0,0,0,0.5); }
+#other-modal .box { background: white; padding: 18px; border-radius: 12px; width: 92%; max-width: 800px; max-height: 80vh; overflow:auto; }
+#other-modal textarea{width:100%;height:220px;border-radius:8px;border:1px solid var(--muted-light);padding:10px;font-family:monospace;white-space:pre-wrap}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+
+/* Crypto proof */
+#crypto-proof-row{display:none;margin-top:12px;padding:12px;background:#fff;border-radius:10px;border:1px solid var(--muted-light)}
+#crypto-proof-row input[type=file]{display:block;margin-top:8px}
+#crypto-proof-row .submit-proof{margin-top:10px;display:flex;gap:8px;align-items:center}
+
+/* small responsiveness */
+@media(max-width:480px){
+  .modal-actions{flex-direction:column}
+  .grid{gap:12px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">AQUAWAVE Motors — Checkout</div>
+    <div class="small">Secure checkout</div>
+  </div>
+
+  <div class="grid">
+    <!-- Left: order details -->
+    <div>
+      <div class="card">
+        <div class="h2">Order summary</div>
+        <div id="order-items" class="order-items"></div>
+
+        <div class="card" style="margin-top:8px">
+          <div class="summary-row"><div>Subtotal</div><div id="subtotal">$0.00</div></div>
+          <div class="summary-row"><div>Crypto discount (5%)</div><div id="discount">-$0.00</div></div>
+          <div class="summary-row"><div>Shipping</div><div id="shipping">$0.00</div></div>
+          <div class="summary-row total"><div>Total</div><div id="grand">$0.00</div></div>
+          <div class="note" id="free-note"></div>
+        </div>
+
+        <div class="field">
+          <div class="small kv">Contact</div>
+          <div id="contact-info" class="small"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="h2">Choose payment option</div>
+        <div id="payment-list" class="pay-options">
+          <label class="pay-item" data-method="crypto" id="pay-crypto">
+            <input type="radio" name="pay" style="display:none">
+            <div style="flex:1">
+              <strong>Crypto</strong>
+              <div class="small">Pay with BTC or USDT (TRC20). 5% discount applied to subtotal.</div>
+            </div>
+          </label>
+
+          <label class="pay-item" data-method="card" id="pay-card">
+            <input type="radio" name="pay" style="display:none">
+            <div style="flex:1">
+              <strong>Credit / Debit Card</strong>
+              <div class="small">Pay with card — secure redirect to the card checkout page.</div>
+            </div>
+          </label>
+
+          <label class="pay-item" data-method="other" id="pay-other">
+            <input type="radio" name="pay" style="display:none">
+            <div style="flex:1">
+              <strong>Other (Contact Support)</strong>
+              <div class="small">Generate your order summary, copy it and contact support to proceed.</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Crypto details -->
+        <div id="crypto-details" style="display:none;margin-top:10px">
+          <div class="small kv">Select crypto network</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn-ghost" id="choose-btc">BTC (Bitcoin)</button>
+            <button class="btn-ghost" id="choose-usdt">USDT (TRC20)</button>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="small kv">Payment address</div>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:flex-start">
+              <div style="flex:1">
+                <div id="crypto-address" class="addr">—</div>
+                <div style="margin-top:8px" class="small">Live rate: <span id="crypto-rate">—</span> — Amount to send: <strong id="crypto-amount">—</strong></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="copy-btn" id="copy-addr">Copy address</button>
+                <button class="copy-btn" id="copy-amount" style="background:#2563eb">Copy amount</button>
+                <button class="btn-ghost" id="open-wallet">Open wallet (optional)</button>
+              </div>
+            </div>
+
+            <div class="note" style="margin-top:8px">After sending funds, keep the TX ID and contact support with proof.</div>
+          </div>
+
+          <!-- Crypto proof upload -->
+          <div id="crypto-proof-row">
+            <div class="small kv">Upload proof of payment (screenshot/receipt)</div>
+            <input id="crypto-proof" type="file" accept="image/*" aria-label="Upload proof of payment">
+            <div class="submit-proof">
+              <button id="submit-proof" class="btn">Submit proof & Open Chat</button>
+              <button id="clear-proof" class="btn-ghost">Clear</button>
+            </div>
+            <div class="small" id="proof-hint">After submitting we'll copy a message to your clipboard and open chat so you can paste and send your proof. If your browser cannot paste images automatically, attach the image manually in the chat.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="pay-now" class="btn">Proceed</button>
+          <button id="back-btn" class="btn-ghost" onclick="location.href='cart.html'">Back to cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: summary + quick info -->
+    <aside>
+      <div class="card">
+        <div class="h2">Quick summary</div>
+        <div style="margin-top:8px">
+          <div class="summary-row"><div>Subtotal</div><div id="side-sub">$0.00</div></div>
+          <div class="summary-row"><div>Discount (crypto)</div><div id="side-dis">-$0.00</div></div>
+          <div class="summary-row"><div>Shipping</div><div id="side-ship">$0.00</div></div>
+          <div class="summary-row total"><div>Total</div><div id="side-total">$0.00</div></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="small kv">Free shipping</div>
+          <div class="small">Orders above <strong>$1,000</strong> get free shipping.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="h2">Crypto addresses</div>
+        <div style="margin-top:8px">
+          <div class="small kv">BTC</div>
+          <div class="addr-row" style="margin-top:6px">
+            <div class="addr" id="addr-btc">1H7QyCp7Htpf329CEb2pzj6a4JYGHtm6bD</div>
+            <button class="copy-btn" data-addr="1H7QyCp7Htpf329CEb2pzj6a4JYGHtm6bD">Copy</button>
+          </div>
+
+          <div style="height:8px"></div>
+
+          <div class="small kv">USDT (TRC20)</div>
+          <div class="addr-row" style="margin-top:6px">
+            <div class="addr" id="addr-usdt">TYVc7KwJUBEe2HMZkUyCRxMhtmQ1Ck5Ybd</div>
+            <button class="copy-btn" data-addr="TYVc7KwJUBEe2HMZkUyCRxMhtmQ1Ck5Ybd">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card">
+        <div class="small kv">Questions?</div>
+        <div class="small" style="margin-top:6px">Contact support via the chat widget and paste the copied order summary.</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Other modal: shows generated order message for 'Other' flow -->
+<div id="other-modal" role="dialog" aria-modal="true">
+  <div class="box">
+    <h3>Order message — copy & contact support</h3>
+    <p class="small">Click <strong>Copy</strong> then open the support chat widget  and paste the message so support can guide you on payment.</p>
+    <textarea id="other-message" readonly></textarea>
+    <div class="modal-actions">
+      <button id="copy-other" class="copy-btn">Copy order message</button>
+      <button id="close-other" class="btn-ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+/* Boat checkout adapted to AQUAWAVE cart keys
+   - reads from localStorage 'AQUAWAVE_last_order' or falls back to 'AQUAWAVE_cart'
+   - shows crypto amounts using CoinGecko simple price endpoint
+*/
+const BTC_ADDR  = '1H7QyCp7Htpf329CEb2pzj6a4JYGHtm6bD';
+const USDT_TRON = 'TYVc7KwJUBEe2HMZkUyCRxMhtmQ1Ck5Ybd';
+
+const COINGECKO_SIMPLE = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,tether&vs_currencies=usd';
+const FREE_SHIPPING_THRESHOLD = 1000.00;
+const SHIPPING_FEE = 60.00;
+const CRYPTO_DISCOUNT = 0.05; // 5% discount for crypto
+
+const $ = id => document.getElementById(id);
+const toast = $('toast');
+
+function showToast(msg='Copied', ms=1600){
+  toast.textContent = msg; toast.classList.add('visible');
+  setTimeout(()=> toast.classList.remove('visible'), ms);
+}
+function format(v){ return '$' + Number(v || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+async function loadOrder(){
+  // prefer last order snapshot if available
+  try {
+    const last = JSON.parse(localStorage.getItem('AQUAWAVE_last_order') || 'null');
+    if(last && (last.cart || last.items) && last.subtotal !== undefined) {
+      // normalize shape if necessary
+      if(last.cart) return last;
+      if(last.items) {
+        const cart = last.items.map(it => ({ name: it.title || it.name, qty: it.qty || 1, price: it.price || 0, priceLabel: '$' + (it.price || 0).toFixed(2), size: '' }));
+        return { cart, subtotal: last.subtotal || cart.reduce((s,i)=> s + (i.price||0)*(i.qty||1), 0), ...last };
+      }
+    }
+  } catch(e){ /* ignore */ }
+
+  // fallback: compute from AQUAWAVE_cart and optionally products.json
+  try {
+    const rawCart = JSON.parse(localStorage.getItem('AQUAWAVE_cart') || '[]');
+    if(!rawCart || rawCart.length === 0) return null;
+    // easiest fallback: use stored price field on cart items (your shop sets price when adding)
+    const items = rawCart.map(it => {
+      return {
+        name: it.title || (it.company ? (it.company + ' ' + (it.model||'')) : ('Item ' + (it.id || ''))),
+        qty: it.qty || 1,
+        price: Number(it.price || 0),
+        priceLabel: ('$' + (Number(it.price||0)).toFixed(2)),
+        size: ''
+      };
+    });
+    const subtotal = items.reduce((s,it)=> s + (Number(it.price||0)) * (it.qty||1), 0);
+    return { cart: items, subtotal, shippingRequested: true, contact: { email: null, tel: null }, createdAt: new Date().toISOString() };
+  } catch(e){
+    console.error('Failed to compute order from AQUAWAVE_cart', e);
+    return null;
+  }
+}
+
+function computeTotals(order, paymentMethod){
+  const subtotal = Number(order.subtotal || 0);
+  const discount = (paymentMethod === 'crypto') ? subtotal * CRYPTO_DISCOUNT : 0;
+  const afterDiscount = Math.max(0, subtotal - discount);
+  const shipping = (afterDiscount >= FREE_SHIPPING_THRESHOLD) ? 0 : SHIPPING_FEE;
+  const total = afterDiscount + shipping;
+  return { subtotal, discount, afterDiscount, shipping, total };
+}
+
+function renderOrder(order, activeMethod='none', cryptoNetwork='btc'){
+  const itemsNode = $('order-items'); itemsNode.innerHTML = '';
+  (order.cart || []).forEach(it => {
+    const div = document.createElement('div'); div.className = 'item';
+    const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${it.name}</div><div class="meta">${it.size || ''} × ${it.qty}</div>`;
+    const price = Number(it.price) || 0;
+    const line = price * (it.qty || 1);
+    const right = document.createElement('div'); right.style.textAlign='right'; right.innerHTML = `<div style="font-weight:700">${format(line)}</div><div class="meta">${it.priceLabel || ('$' + price.toFixed(2))} each</div>`;
+    div.appendChild(left); div.appendChild(right);
+    itemsNode.appendChild(div);
+  });
+
+  const totals = computeTotals(order, activeMethod === 'crypto' ? 'crypto' : 'none');
+  $('subtotal').textContent = format(totals.subtotal);
+  $('discount').textContent = '-' + format(totals.discount);
+  $('shipping').textContent = format(totals.shipping);
+  $('grand').textContent = format(totals.total);
+
+  $('side-sub').textContent = format(totals.subtotal);
+  $('side-dis').textContent = '-' + format(totals.discount);
+  $('side-ship').textContent = format(totals.shipping);
+  $('side-total').textContent = format(totals.total);
+
+  if(totals.afterDiscount >= FREE_SHIPPING_THRESHOLD){
+    $('free-note').textContent = 'Eligible for free shipping.';
+  } else {
+    $('free-note').textContent = `Orders below $${FREE_SHIPPING_THRESHOLD} incur a $${SHIPPING_FEE} shipping fee.`;
+  }
+
+  const contactInfo = [];
+  if(order.email) contactInfo.push(`Email: ${order.email}`);
+  if(order.tel) contactInfo.push(`Tel: ${order.tel}`);
+  if(order.shipping_address) contactInfo.push(`Ship: ${order.shipping_address}`);
+  $('contact-info').textContent = contactInfo.join(' • ') || 'No contact information provided';
+
+  const addr = cryptoNetwork === 'btc' ? BTC_ADDR : USDT_TRON;
+  $('crypto-address').textContent = addr;
+}
+
+/* Payment method selection */
+function selectPaymentMethod(method){
+  document.querySelectorAll('.pay-item').forEach(el=> el.classList.remove('selected'));
+  const el = document.querySelector(`[data-method="${method}"]`);
+  if(el) el.classList.add('selected');
+  $('crypto-details').style.display = (method === 'crypto') ? 'block' : 'none';
+  $('crypto-proof-row').style.display = (method === 'crypto') ? 'block' : 'none';
+  renderOrder(currentOrder, method, selectedCrypto);
+}
+
+/* Clipboard helper */
+async function copyToClipboard(text){
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Copied to clipboard');
+    return true;
+  } catch(e){
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('Copied to clipboard'); } catch(e2){ alert('Copy failed — please manually copy: ' + text); return false; } finally { ta.remove(); }
+    return true;
+  }
+}
+
+/* Attempt to copy image blob to clipboard (best-effort). Returns true if succeeded. */
+async function copyImageToClipboard(file){
+  if(!file) return false;
+  if(!navigator.clipboard || !window.ClipboardItem) return false;
+  try {
+    const blob = file;
+    const item = new ClipboardItem({ [blob.type]: blob });
+    await navigator.clipboard.write([item]);
+    return true;
+  } catch(e){
+    console.warn('Image copy to clipboard failed', e);
+    return false;
+  }
+}
+
+/* Open / maximize Tawk.to widget (best-effort) */
+function openTawk(){
+  try {
+    if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
+      window.Tawk_API.maximize();
+    } else if (window.Tawk_API && typeof window.Tawk_API.toggle === 'function') {
+      window.Tawk_API.toggle();
+    } else {
+      console.warn('Tawk API not ready yet.');
+    }
+  } catch(e){ console.warn('openTawk error', e); }
+}
+
+/* OTHER modal handling */
+function showOtherModal(messagePlain){
+  const modal = $('other-modal');
+  const ta = $('other-message');
+  ta.value = messagePlain;
+  modal.style.display = 'flex';
+  modal.querySelector('.box').scrollTop = 0;
+}
+function hideOtherModal(){ $('other-modal').style.display = 'none'; }
+
+/* Crypto rates / UI */
+let currentRates = { bitcoin: null, tether: null };
+async function fetchRates(){
+  try{
+    const r = await fetch(COINGECKO_SIMPLE, {cache:'no-cache'});
+    if(!r.ok) throw new Error('coingecko status ' + r.status);
+    const j = await r.json();
+    currentRates.bitcoin = j.bitcoin && j.bitcoin.usd ? Number(j.bitcoin.usd) : null;
+    currentRates.tether = j.tether && j.tether.usd ? Number(j.tether.usd) : 1;
+    updateCryptoUI();
+  }catch(err){
+    console.warn('Could not fetch rates', err);
+    $('crypto-rate').textContent = 'rate unavailable';
+  }
+}
+
+function updateCryptoUI(){
+  const totals = computeTotals(currentOrder, 'crypto');
+  const usd = Number(totals.total || 0);
+  if(selectedCrypto === 'btc'){
+    if(currentRates.bitcoin){
+      $('crypto-rate').textContent = '$' + Number(currentRates.bitcoin).toLocaleString();
+      const btcAmt = usd / currentRates.bitcoin;
+      $('crypto-amount').textContent = btcAmt.toFixed(8) + ' BTC';
+    } else {
+      $('crypto-rate').textContent = '—';
+      $('crypto-amount').textContent = '—';
+    }
+  } else {
+    if(currentRates.tether){
+      $('crypto-rate').textContent = '$' + Number(currentRates.tether).toLocaleString();
+      const usdtAmt = usd / currentRates.tether;
+      $('crypto-amount').textContent = usdtAmt.toFixed(6) + ' USDT';
+    } else {
+      $('crypto-rate').textContent = '—';
+      $('crypto-amount').textContent = '—';
+    }
+  }
+}
+
+/* Proceed flows */
+async function handleProceed(){
+  const method = selectedPaymentMethod;
+  const totals = computeTotals(currentOrder, method === 'crypto' ? 'crypto' : 'none');
+  const snapshot = { order: currentOrder, method, cryptoNetwork: selectedCrypto, totals, createdAt: new Date().toISOString() };
+
+  if(method === 'card'){
+    try { localStorage.setItem('AQUAWAVE_payment', JSON.stringify(snapshot)); } catch(e){}
+    // redirect to your existing card checkout page
+    window.location.href = 'payout.html';
+    return;
+  }
+
+  if(method === 'crypto'){
+    try { localStorage.setItem('AQUAWAVE_pending_crypto', JSON.stringify(snapshot)); } catch(e){}
+    const addr = selectedCrypto === 'btc' ? BTC_ADDR : USDT_TRON;
+    const amountText = $('crypto-amount').textContent || '';
+    const copyText = `${addr}\nAmount: ${amountText}\nReference: AQUAWAVE order — please paste this in chat with your proof.`;
+    await copyToClipboard(copyText);
+    showToast('Address + amount copied. Upload proof and submit to open chat.');
+    return;
+  }
+
+  if(method === 'other'){
+    const itemsLines = (currentOrder.cart || []).map(it => `${it.qty}× ${it.name} (${it.size}) — ${it.priceLabel || ('$' + (it.price||0).toFixed(2))}`).join('\n');
+    const totals = computeTotals(currentOrder, 'none');
+    const msgPlain = `Hello,\n\nI would like to arrange payment for my AQUAWAVE order.\n\nItems:\n${itemsLines}\n\nSubtotal: ${format(totals.subtotal)}\nShipping: ${format(totals.shipping)}\nTotal: ${format(totals.total)}\n\nContact:\n${currentOrder.email?('Email: '+currentOrder.email+'\n'):''}${currentOrder.tel?('Tel: '+currentOrder.tel+'\n'):''}\n\nPlease let me know how to proceed with payment.`;
+    showOtherModal(msgPlain);
+    return;
+  }
+}
+
+/* Crypto proof submit handler */
+async function handleCryptoProofSubmit(){
+  const fileInput = $('crypto-proof');
+  const file = (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null;
+  const totals = computeTotals(currentOrder, 'crypto');
+  const msg = `Hello support,\n\nI have sent payment for my AQUAWAVE order using ${selectedCrypto === 'btc' ? 'BTC' : 'USDT (TRC20)'}.\n\nOrder total: ${format(totals.total)}\nNetwork: ${selectedCrypto === 'btc' ? 'Bitcoin (BTC)' : 'TRC20 (USDT)'}\nPayment address: ${(selectedCrypto === 'btc') ? BTC_ADDR : USDT_TRON}\n\nPlease find attached proof of payment (I will paste it below). TX ID: (if available)\n\nThanks.`;
+
+  await copyToClipboard(msg);
+
+  let imageCopied = false;
+  if(file){
+    imageCopied = await copyImageToClipboard(file).catch(()=>false);
+  }
+
+  openTawk();
+
+  if(imageCopied){
+    showToast('Message + image copied. Paste into chat (Ctrl+V / Cmd+V) and send.');
+  } else {
+    showToast('Message copied. Attach image in chat and paste message.');
+    if(file){
+      const url = URL.createObjectURL(file);
+      const wantDownload = confirm('Your browser prevented copying the image to clipboard. Click OK to open the image in a new tab so you can save/attach it manually to chat.');
+      if(wantDownload) window.open(url, '_blank');
+    }
+  }
+
+  try {
+    const pending = JSON.parse(localStorage.getItem('AQUAWAVE_pending_crypto') || 'null') || {};
+    pending.proofSubmittedAt = new Date().toISOString();
+    localStorage.setItem('AQUAWAVE_pending_crypto', JSON.stringify(pending));
+  } catch(e){}
+}
+
+/* Wiring */
+let currentOrder = null;
+let selectedPaymentMethod = 'card';
+let selectedCrypto = 'btc';
+
+async function boot(){
+  currentOrder = await loadOrder();
+  if(!currentOrder){
+    alert('No order found (AQUAWAVE_last_order or AQUAWAVE_cart). Returning to cart.');
+    window.location.href = 'cart.html';
+    return;
+  }
+
+  renderOrder(currentOrder, selectedPaymentMethod, selectedCrypto);
+
+  [['crypto','pay-crypto'],['card','pay-card'],['other','pay-other']].forEach(([method,id])=>{
+    const el = document.getElementById(id);
+    el.addEventListener('click', ()=> {
+      selectedPaymentMethod = method;
+      selectPaymentMethod(method);
+    });
+  });
+
+  $('choose-btc').addEventListener('click', ()=> {
+    selectedCrypto = 'btc';
+    $('choose-btc').classList.add('btn'); $('choose-btc').classList.remove('btn-ghost');
+    $('choose-usdt').classList.remove('btn'); $('choose-usdt').classList.add('btn-ghost');
+    renderOrder(currentOrder, selectedPaymentMethod, selectedCrypto);
+    updateCryptoUI();
+  });
+  $('choose-usdt').addEventListener('click', ()=> {
+    selectedCrypto = 'usdt';
+    $('choose-usdt').classList.add('btn'); $('choose-usdt').classList.remove('btn-ghost');
+    $('choose-btc').classList.remove('btn'); $('choose-btc').classList.add('btn-ghost');
+    renderOrder(currentOrder, selectedPaymentMethod, selectedCrypto);
+    updateCryptoUI();
+  });
+
+  document.querySelectorAll('.copy-btn[data-addr]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const a = btn.dataset.addr || '';
+      copyToClipboard(a);
+    });
+  });
+
+  $('copy-addr').addEventListener('click', ()=> {
+    const addr = (selectedCrypto === 'btc') ? BTC_ADDR : USDT_TRON;
+    copyToClipboard(addr);
+  });
+
+  $('copy-amount').addEventListener('click', ()=> {
+    const amt = $('crypto-amount').textContent || '';
+    copyToClipboard(amt);
+  });
+
+  $('open-wallet').addEventListener('click', ()=> {
+    const addr = (selectedCrypto === 'btc') ? BTC_ADDR : USDT_TRON;
+    showToast('Address copied to clipboard for use in your wallet.');
+    copyToClipboard(addr);
+  });
+
+  $('pay-now').addEventListener('click', ()=> { handleProceed(); });
+
+  // Crypto proof submit
+  $('submit-proof').addEventListener('click', async (e)=> {
+    e.preventDefault();
+    if(selectedPaymentMethod !== 'crypto'){
+      alert('Select Crypto as payment method first.');
+      return;
+    }
+    const file = $('crypto-proof').files && $('crypto-proof').files[0];
+    if(!file){
+      const ok = confirm('No proof selected. Do you want to proceed opening chat with the message only? Click OK to continue.');
+      if(!ok) return;
+    }
+    await handleCryptoProofSubmit();
+  });
+
+  $('clear-proof').addEventListener('click', ()=> { $('crypto-proof').value = ''; });
+
+  // Other modal copy & close
+  $('copy-other').addEventListener('click', ()=> {
+    const t = $('other-message').value;
+    copyToClipboard(t);
+    openTawk();
+    showToast('Order message copied — paste into chat with support');
+  });
+  $('close-other').addEventListener('click', ()=> { hideOtherModal(); });
+
+  // fetch rates initially
+  fetchRates();
+
+  // re-fetch rates on visibility or periodically (best-effort)
+  document.addEventListener('visibilitychange', ()=> { if(!document.hidden) fetchRates(); });
+  setInterval(fetchRates, 120000); // update every 2 minutes
+
+  // storage events: if cart updated in another tab
+  window.addEventListener('storage', (e)=>{
+    if(e.key === 'AQUAWAVE_last_order' || e.key === 'AQUAWAVE_cart'){
+      (async ()=>{ currentOrder = await loadOrder(); renderOrder(currentOrder, selectedPaymentMethod, selectedCrypto); updateCryptoUI(); })();
+    }
+  });
+
+  // initial UI
+  selectPaymentMethod(selectedPaymentMethod);
+  $('addr-btc').textContent = BTC_ADDR;
+  $('addr-usdt').textContent = USDT_TRON;
+}
+
+boot();
+</script>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/694bd0836edca7197f963255/1jd82d0ui';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outboard Motors — Outboard Motors & Parts</title>
+  <meta name="description" content="Outboard Motors — shop Honda, Mercury, Suzuki, Tohatsu, and Yamaha outboard motors. Browse by horsepower, shaft length, starter type and trim. Fast shipping.">
+  <link rel="canonical" href="https://www.outboardmotor.store/" />
+  <style>
+    /*
+      Revised CSS only — HTML unchanged except dynamic injection via JS at the end.
+      Kept your color theme and layout. Added a promo bar and fixed featured card button styling.
+    */
+
+    :root{
+      --bg:#f7f8fa;
+      --card:#ffffff;
+      --accent:#ec407a;
+      --accent-2:#4dd0e1;
+      --muted:#6b6b6b;
+      --max:1200px;
+      --shadow-lg: 0 20px 40px rgba(18,24,32,0.08);
+      --shadow-sm: 0 8px 20px rgba(12,18,24,0.04);
+      --radius:12px;
+      --gap:16px;
+      --easing:cubic-bezier(.2,.9,.2,1);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:#222;
+      line-height:1.45;
+      font-size:15px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a{ color:inherit; text-decoration:none }
+    img{ display:block; max-width:100%; height:auto; }
+
+    header.site-header{
+      position:sticky; top:0; z-index:80;
+      background:linear-gradient(180deg, #ffffff, #fbfbfb);
+      border-bottom:1px solid rgba(20,20,20,0.04);
+      backdrop-filter: blur(4px);
+    }
+    .nav-inner{
+      max-width:var(--max); margin:0 auto;
+      display:flex; align-items:center; padding:12px 20px; gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:700; font-size:18px }
+    .brand .logo-placeholder{
+      width:140px; height:44px; border-radius:10px;
+      background:linear-gradient(90deg,#f1f1f1,#fafafa);
+      display:flex; align-items:center; justify-content:center; color:#999; font-weight:800;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+    }
+    nav.main-nav{ display:flex; gap:14px; margin-left:8px; align-items:center; }
+    nav.main-nav a{
+      color:#333; font-weight:600; padding:8px 10px; border-radius:8px; font-size:14px;
+      transition:background .18s var(--easing), color .18s var(--easing);
+    }
+    nav.main-nav a:hover{ background:#fff0f6; color:var(--accent); transform:translateY(-1px) }
+    .spacer{ flex:1 }
+
+    .search-inline{ flex-basis:420px; min-width:160px; }
+    .search-inline input{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid #eee;
+      background:#fff; box-shadow: 0 6px 18px rgba(12,18,24,0.03);
+    }
+
+    .icons{ display:flex; gap:10px; align-items:center }
+    .icon-btn{
+      display:inline-flex; gap:8px; align-items:center;
+      background:#fff; border:1px solid #eee; padding:8px 10px; border-radius:10px; cursor:pointer; font-size:15px;
+      box-shadow: 0 6px 18px rgba(12,18,24,0.03);
+      transition: transform .14s var(--easing), box-shadow .14s var(--easing);
+    }
+    .icon-btn:hover{ transform:translateY(-3px); box-shadow: var(--shadow-sm) }
+
+    .hamburger{
+      display:none; background:#fff; border:1px solid #eee; padding:8px; border-radius:8px; cursor:pointer;
+      box-shadow: 0 6px 18px rgba(12,18,24,0.03);
+    }
+    @media(max-width:880px){
+      nav.main-nav{ display:none }
+      .search-inline{ display:none }
+      .hamburger{ display:block }
+      .nav-inner { padding:10px 14px }
+    }
+
+    /* PROMO BAR pinned under navbar */
+    .promo-bar{
+      position:sticky;
+      top:56px; /* sits just under the sticky header (header top:0). adjust if header height changes */
+      z-index:75;
+      background:linear-gradient(90deg, rgba(236,64,122,0.06), rgba(77,208,225,0.02));
+      color:#222;
+      border-bottom:1px solid rgba(0,0,0,0.03);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      font-weight:700;
+    }
+    .promo-bar .promo-inner{ max-width:var(--max); width:100%; padding:0 16px; display:flex; align-items:center; gap:12px; justify-content:center; }
+    .promo-bar .code { background:#fff; color:var(--accent); border-radius:8px; padding:6px 10px; box-shadow:0 6px 18px rgba(236,64,122,0.06); }
+    .promo-bar .promo-close{ margin-left:8px; background:transparent; border:0; font-size:16px; cursor:pointer; padding:6px; border-radius:6px; color:#333 }
+    @media(max-width:640px){ .promo-bar{ font-size:14px; padding:8px 8px } .promo-bar{ top:52px } }
+
+    .hero{
+      background-image: url(bg.jpg);
+      background-size: cover; background-position:center;
+      color: white; text-align:left; padding:64px 0 56px; position:relative;
+    }
+    .hero::after{
+      content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.12)); pointer-events:none; border-bottom:1px solid rgba(0,0,0,0.02);
+    }
+    .hero-inner{
+      max-width:var(--max); margin:0 auto; padding:0 20px; display:flex; gap:20px; align-items:center; position:relative; z-index:1;
+    }
+    .hero-left{ flex:1; color:#fff; text-shadow: 0 6px 20px rgba(0,0,0,0.45) }
+    .hero h1{ margin:0; font-size:34px; line-height:1.02; text-transform:uppercase; letter-spacing:1px; font-weight:800 }
+    .hero p{
+      color:rgba(255,255,255,0.95); margin:12px 0 18px; max-width:760px;
+      background:rgba(0,0,0,0.34); display:inline-block; padding:12px 16px; border-radius:10px; font-size:1rem;
+    }
+    .hero-actions{ display:flex; gap:12px; margin-top:12px; align-items:center; flex-wrap:wrap }
+    .btn{
+      padding:10px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
+      color:#fff; cursor:pointer; text-decoration:none; font-weight:700; font-size:14px;
+      transition: transform .16s var(--easing), box-shadow .16s var(--easing), opacity .12s var(--easing);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      backdrop-filter: blur(4px);
+    }
+    .btn:hover{ transform:translateY(-4px); opacity:0.98; box-shadow: var(--shadow-lg) }
+    .btn.primary{ background:var(--accent); border:none; color:#fff; box-shadow: 0 12px 30px rgba(236,64,122,0.12) }
+
+    .hero-search{
+      margin-top:18px; background:rgba(255,255,255,0.06); padding:12px; border-radius:12px; display:flex; gap:8px; align-items:center;
+      border:1px solid rgba(255,255,255,0.08); width:100%; max-width:760px;
+    }
+    .hero-search input{ flex:1; padding:12px; border:none; outline:none; font-size:15px; background:transparent; color:#fff }
+    .hero-search button{ padding:10px 14px; border-radius:8px; border:none; background:var(--accent); color:#fff; font-weight:700; cursor:pointer }
+
+    .hero-right{ width:420px; }
+    .hero-right img{ width:100%; border-radius:12px; display:block; box-shadow: 0 20px 40px rgba(4,8,12,0.35); transform:translateY(0); transition: transform .5s var(--easing); }
+    .hero-right img:hover{ transform:translateY(-6px) scale(1.01) }
+
+    @media (max-width:880px){
+      .hero{ padding:36px 0 28px }
+      .hero-inner{ flex-direction:column; gap:14px; text-align:center; align-items:stretch }
+      .hero-left{ width:100%; text-align:center }
+      .hero-actions{ justify-content:center; flex-direction:column }
+      .hero-actions .btn{ width:100% }
+      .hero-right{ width:100% }
+      .hero-right img{ max-height:220px; object-fit:cover }
+      .hero-search{ width:100% }
+    }
+    @media (max-width:480px){
+      .hero h1{ font-size:22px }
+      .hero p{ font-size:0.95rem; padding:10px }
+    }
+
+    .section{ max-width:var(--max); margin:28px auto; padding:0 20px; }
+    .section-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .section-header h2{ margin:0; font-size:20px; letter-spacing:0.2px }
+    .small-muted{ color:var(--muted); font-size:14px }
+
+    /* Collections / Top Categories */
+    .collections{
+      display:flex; gap:14px; overflow:hidden; padding-bottom:6px; padding-top:6px;
+      position:relative; align-items:stretch;
+    }
+    .collection-card{
+      flex:0 0 220px; min-width:180px; background:var(--card); border-radius:12px; border:1px solid #eee;
+      box-shadow:var(--shadow-sm); padding:12px; cursor:pointer; transition: transform .18s var(--easing), box-shadow .18s var(--easing);
+      display:flex; flex-direction:column; gap:10px; justify-content:flex-start;
+    }
+    .collection-card:hover{ transform:translateY(-8px); box-shadow: var(--shadow-lg) }
+    .collection-card img{ width:100%; height:120px; object-fit:cover; border-radius:8px; display:block }
+    .collection-card h3{ margin:6px 0 4px 0; font-size:15px }
+    .collection-card p{ margin:0; color:var(--muted); font-size:13px }
+
+    @media(min-width:980px){
+      .collections { animation: marqueeX 28s linear infinite; will-change:transform; }
+      .collections:hover { animation-play-state:paused; }
+    }
+    @keyframes marqueeX { 0% { transform: translateX(0); } 100% { transform: translateX(-30%); } }
+
+    /* Featured products grid */
+    .featured-grid{
+      display:grid; grid-template-columns:repeat(4,1fr); gap:18px; align-items:stretch;
+    }
+    @media(max-width:1100px){ .featured-grid{ grid-template-columns:repeat(3,1fr) } }
+    @media(max-width:800px){ .featured-grid{ grid-template-columns:repeat(2,1fr) } }
+    @media(max-width:480px){ .featured-grid{ grid-template-columns:1fr } }
+
+    .featured-card{
+      background:var(--card); border-radius:12px; border:1px solid #eee; padding:12px;
+      display:flex; flex-direction:column; gap:12px; box-shadow:var(--shadow-sm);
+      transition: transform .25s var(--easing), box-shadow .25s var(--easing);
+      position:relative; overflow:hidden;
+    }
+    .featured-card::before{
+      content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:linear-gradient(180deg,var(--accent),var(--accent-2)); border-top-left-radius:12px; border-bottom-left-radius:12px;
+      transform:translateX(-2px);
+    }
+    .featured-card img{ width:100%; height:140px; object-fit:cover; border-radius:8px; display:block; transition: transform .45s var(--easing) }
+    .featured-card:hover img{ transform:scale(1.03) rotate(.2deg) }
+    .featured-card:hover{ transform:translateY(-10px); box-shadow: 0 30px 60px rgba(8,12,20,0.12) }
+
+    .featured-card h4{ margin:0; font-size:16px; font-weight:700 }
+    .featured-card .meta{ color:var(--muted); font-size:13px }
+    .featured-card .cta-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:auto }
+
+    /* FIX: make the featured card button visible on white background
+       Default: accent-outline, hover -> solid accent background */
+    .featured-card .btn{
+      background: transparent !important;
+      color: var(--accent) !important;
+      border: 1px solid var(--accent) !important;
+      padding:8px 12px !important;
+      border-radius:8px !important;
+      font-weight:700 !important;
+      box-shadow:none !important;
+    }
+    .featured-card .btn:hover{
+      background: var(--accent) !important;
+      color: #fff !important;
+      border-color: var(--accent) !important;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(236,64,122,0.12);
+    }
+
+    @keyframes cardIn { 0% { transform: translateY(14px); opacity:0; } 100% { transform: translateY(0); opacity:1; } }
+    .featured-card{ animation: cardIn .5s var(--easing) both; }
+
+    /* show only 4 visually: JS injects items; CSS ensures layout shows 4 */
+    .featured-grid .featured-card:nth-child(n+5){ display:none; }
+
+    /* Brands strip */
+    .brands-strip{
+      display:flex; gap:14px; overflow:hidden; padding:10px 6px; align-items:center;
+      position:relative;
+    }
+    .brand-pill{
+      flex:0 0 auto; min-width:110px; background:var(--card); padding:10px 14px; border-radius:10px; border:1px solid #eee;
+      display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); transition: transform .16s var(--easing), background .14s var(--easing), color .14s var(--easing);
+      cursor:pointer;
+    }
+    .brand-pill img{ max-height:36px; opacity:0.95; transition: transform .18s var(--easing) }
+
+    /* hover and active states for brand pills */
+    .brand-pill:hover{
+      transform:translateY(-6px);
+      background: linear-gradient(90deg, rgba(236,64,122,0.06), rgba(77,208,225,0.02));
+      border-color: rgba(236,64,122,0.18);
+    }
+    .brand-pill.active{
+      background: linear-gradient(90deg, rgba(236,64,122,0.10), rgba(77,208,225,0.03));
+      box-shadow: 0 14px 36px rgba(236,64,122,0.06);
+      border-color: rgba(236,64,122,0.22);
+    }
+
+    @keyframes brandsMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-40%); } }
+    @media(min-width:980px){
+      .brands-strip{ animation: brandsMarquee 36s linear infinite; }
+      .brands-strip:hover{ animation-play-state:paused; }
+    }
+
+    /* Benefits */
+    .benefits{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    @media(max-width:980px){ .benefits{ grid-template-columns:1fr } }
+    .benefit-card{
+      background:var(--card); padding:18px; border-radius:12px; border:1px solid #eee; box-shadow:var(--shadow-sm);
+      text-align:center; transition: transform .16s var(--easing), box-shadow .16s var(--easing);
+    }
+    .benefit-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lg) }
+    .benefit-card img{ width:100px; height:72px; object-fit:cover; margin:0 auto 10px; border-radius:8px }
+
+    /* Testimonials carousel */
+    .testimonials{
+      position:relative;
+      overflow:hidden;
+      display:block;
+      min-height:120px;
+    }
+    .testimonial-track{ display:flex; gap:12px; transition: transform .45s var(--easing); width:100%; }
+    .testimonial{
+      flex:0 0 100%; box-sizing:border-box;
+      background:var(--card); padding:16px; border-radius:12px; border:1px solid #eee; box-shadow:var(--shadow-sm);
+    }
+    .test-controls{ display:flex; gap:8px; align-items:center; justify-content:center; margin-top:12px }
+    .test-btn{ background:#fff; border:1px solid #eee; padding:8px 10px; border-radius:8px; cursor:pointer }
+    .test-indicators{ display:flex; gap:8px; align-items:center; }
+    .indicator{
+      width:10px; height:10px; border-radius:50%; background:#eee; cursor:pointer; border:1px solid rgba(0,0,0,0.04);
+    }
+    .indicator.active{ background:var(--accent); box-shadow:0 6px 18px rgba(236,64,122,0.12) }
+
+    /* Newsletter */
+    .newsletter{
+      background:linear-gradient(180deg,#fff,#fff); padding:18px; border-radius:12px; border:1px solid #eee;
+      display:flex; gap:12px; align-items:center; justify-content:space-between; box-shadow:var(--shadow-lg);
+      flex-wrap:wrap;
+    }
+    .newsletter form{ display:flex; gap:8px; align-items:center; width:100%; max-width:720px }
+    .newsletter input[type="email"]{ padding:12px 14px; border-radius:8px; border:1px solid #eee; flex:1; background:#fff }
+
+    .muted{ color:var(--muted) }
+    .center{ text-align:center }
+
+    @media(max-width:640px){
+      .nav-inner{ padding:10px 12px }
+      .section{ margin:20px 0 }
+      .collection-card{ min-width:160px; flex:0 0 180px }
+      .brand-pill{ min-width:90px; padding:8px }
+      .featured-card{ padding:10px }
+      .featured-card img{ height:160px; }
+      .hero-right{ display:none }
+      .test-controls { flex-direction:column; gap:6px }
+      .promo-bar{ top:52px } /* shift promo slightly on small screens */
+    }
+
+    a:focus, button:focus, input:focus { outline:3px solid rgba(236,64,122,0.15); outline-offset:2px; border-radius:8px }
+  </style>
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="nav-inner">
+      <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+      <a class="brand" href="./" aria-label="AQUAWAVE Motors home">
+        <div class="logo-placeholder" aria-hidden="true">
+          <img src="logo.jpg">
+        </div>
+        <span style="display:none">AQUAWAVE Motors</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="./">Home</a>
+        <a href="./shop.html">Shop</a>
+        <a href="./reviews.html">Reviews</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+      <div class="spacer" aria-hidden="true"></div>
+      <div class="search-inline" role="search" aria-label="Site search">
+        <form action="search.html" method="GET" id="top-search-form">
+          <input name="q" type="search" aria-label="Search models, brands or horsepower" placeholder="Search model, brand or horsepower (e.g., Yamaha F20, 20 HP)" />
+        </form>
+      </div>
+      <div class="icons">
+        <a class="icon-btn" id="cart-btn" href="cart.html" aria-label="Cart">🛒 <span id="cart-count">0</span></a>
+        <a class="icon-btn" id="login-btn" href="login.html" aria-label="Login">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Promo bar pinned under header -->
+  <div class="promo-bar" id="promo-bar" role="region" aria-label="Promotional offer">
+    <div class="promo-inner">
+      <div Get <strong>7% OFF</strong> — use code <span class="code">NEWGUY</span> at checkout</div>
+      <div style="margin-left:12px"><a class="btn" href="shop.html" style="padding:6px 10px; font-size:13px">Shop deals</a></div>
+      <button class="promo-close" id="promo-close" aria-label="Close promotion">✕</button>
+    </div>
+  </div>
+
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <h1 id="hero-heading">Find the Perfect Outboard Motor for Your Boat</h1>
+        <p>Shop Honda, Mercury, Suzuki, Tohatsu and Yamaha. Fast shipping, trusted dealers.</p>
+        <div class="hero-actions">
+          <a href="shop.html" class="btn primary" role="button">Shop Now</a>
+          <a href="#collections" class="btn">Browse Collections</a>
+          <a href="finance.html" class="btn" aria-label="Request finance">Request Finance</a>
+        </div>
+
+        <div class="hero-search" role="search" aria-label="Hero search">
+          <div style="width:100%">
+            <form action="search.html" method="GET" id="hero-search-form">
+              <input id="hero-search-input" name="q" type="search" placeholder="Search model, brand or horsepower (e.g., Yamaha F20, 20 HP)" aria-label="Search models and brands (autocomplete)" autocomplete="off" />
+              <button type="submit" aria-label="Search">Search</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="hero-right" aria-hidden="true">
+        <img src="https://placehold.co/420x240?text=Outboard+Motors" alt="Outboard motors" style="width:100%;border-radius:12px;display:block">
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SECTIONS START HERE -->
+  <section id="collections" class="section" aria-labelledby="collections-title">
+    <div class="section-header">
+      <h2 id="collections-title">Top Categories</h2>
+      <div class="small-muted">Browse by category — click any to open that collection in the store</div>
+    </div>
+
+    <div class="collections" role="list" aria-label="Top categories">
+      <div class="collection-card" role="listitem" onclick="location.href='shop.html?collection=outboards'">
+        <img src="https://placehold.co/600x400?text=Outboards" alt="Outboards">
+        <h3>Outboard Motors</h3>
+        <p>From 2 HP to 30 HP — shop trusted brands.</p>
+      </div>
+
+      <div class="collection-card" role="listitem" onclick="location.href='shop.html?collection=parts'">
+        <img src="https://placehold.co/600x400?text=Spare+Parts" alt="Spare parts">
+        <h3>Spare Parts</h3>
+        <p>Filters, props, gaskets and more.</p>
+      </div>
+
+      <div class="collection-card" role="listitem" onclick="location.href='shop.html?collection=accessories'">
+        <img src="https://placehold.co/600x400?text=Accessories" alt="Accessories">
+        <h3>Accessories</h3>
+        <p>Fuel tanks, mounting kits, and covers.</p>
+      </div>
+
+      <div class="collection-card" role="listitem" onclick="location.href='shop.html?collection=finance'">
+        <img src="https://placehold.co/600x400?text=Finance" alt="Finance">
+        <h3>Finance Options</h3>
+        <p>Flexible plans to help you buy today.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="featured" class="section" aria-labelledby="featured-title">
+    <div class="section-header">
+      <h2 id="featured-title">Featured Products</h2>
+      <div class="small-muted">Hand-picked motors & popular picks this month</div>
+    </div>
+
+    <div class="featured-grid" role="list" aria-label="Featured products" id="featured-grid">
+      <!-- JS will inject up to 4 featured cards here from boat_motors.json -->
+      <!-- fallback placeholders while JS loads -->
+      <div class="featured-card" role="listitem">
+        <img src="https://placehold.co/800x500?text=Loading..." alt="Loading">
+        <h4>Loading...</h4>
+        <div class="meta">—</div>
+        <div class="cta-row">
+          <div style="font-weight:800;color:var(--accent)">$0</div>
+          <div><a class="btn" href="#">View</a></div>
+        </div>
+      </div>
+      <div class="featured-card" role="listitem">
+        <img src="https://placehold.co/800x500?text=Loading..." alt="Loading">
+        <h4>Loading...</h4>
+        <div class="meta">—</div>
+        <div class="cta-row">
+          <div style="font-weight:800;color:var(--accent)">$0</div>
+          <div><a class="btn" href="#">View</a></div>
+        </div>
+      </div>
+      <div class="featured-card" role="listitem">
+        <img src="https://placehold.co/800x500?text=Loading..." alt="Loading">
+        <h4>Loading...</h4>
+        <div class="meta">—</div>
+        <div class="cta-row">
+          <div style="font-weight:800;color:var(--accent)">$0</div>
+          <div><a class="btn" href="#">View</a></div>
+        </div>
+      </div>
+      <div class="featured-card" role="listitem">
+        <img src="https://placehold.co/800x500?text=Loading..." alt="Loading">
+        <h4>Loading...</h4>
+        <div class="meta">—</div>
+        <div class="cta-row">
+          <div style="font-weight:800;color:var(--accent)">$0</div>
+          <div><a class="btn" href="#">View</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;text-align:center">
+      <a class="btn" href="shop.html">View full catalogue</a>
+    </div>
+  </section>
+
+  <section id="brands" class="section" aria-labelledby="brands-title">
+    <div class="section-header">
+      <h2 id="brands-title">Trusted Brands</h2>
+      <div class="small-muted">We stock genuine parts from top makers</div>
+    </div>
+
+    <div class="brands-strip" aria-label="Brands list" id="brands-strip">
+      <div class="brand-pill" data-brand="Yamaha"><img src="yamaha.jpg" alt="Yamaha"></div>
+      <div class="brand-pill" data-brand="Mercury"><img src="mercury.jpg" alt="Mercury"></div>
+      <div class="brand-pill" data-brand="Honda"><img src="honda.jpg" alt="Honda"></div>
+      <div class="brand-pill" data-brand="Suzuki"><img src="suzuki.jpg" alt="Suzuki"></div>
+      <div class="brand-pill" data-brand="Tohatsu"><img src="tohatsu.jpg" alt="Tohatsu"></div>
+    </div>
+  </section>
+
+  <section id="benefits" class="section" aria-labelledby="benefits-title">
+    <div class="section-header">
+      <h2 id="benefits-title">Why Shop With Us</h2>
+      <div class="small-muted">Trusted service, genuine parts and fast shipping</div>
+    </div>
+
+    <div class="benefits">
+      <div class="benefit-card">
+        <!-- This uses an image to look neater as requested -->
+        <img src="warranty.jpg" alt="Warranty">
+        <h4>Warranty-backed</h4>
+        <p class="muted">Manufacturer warranty on selected models.</p>
+      </div>
+
+      <div class="benefit-card">
+        <img src="support.jpg" alt="Support">
+        <h4>Expert Support</h4>
+        <p class="muted">Technical help and spare part guidance.</p>
+      </div>
+
+      <div class="benefit-card">
+        <img src="shipping.jpg" alt="Shipping">
+        <h4>Fast Shipping</h4>
+        <p class="muted">Delivered to your door within business days.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="section" aria-labelledby="testimonials-title">
+    <div class="section-header">
+      <h2 id="testimonials-title">What Customers Say</h2>
+      <div class="small-muted">Real feedback from buyers</div>
+    </div>
+
+    <div class="testimonials" aria-live="polite">
+      <div class="testimonial-track" id="testimonial-track">
+        <div class="testimonial">
+          <div style="font-weight:700">James P. <span style="color:#f6a623">★★★★★</span></div>
+          <p class="muted">"Great motor — reliable and fuel efficient. Delivery was fast."</p>
+        </div>
+
+        <div class="testimonial">
+          <div style="font-weight:700">Amina K. <span style="color:#f6a623">★★★★☆</span></div>
+          <p class="muted">"Support helped me choose the right shaft length — works perfectly."</p>
+        </div>
+
+        <div class="testimonial">
+          <div style="font-weight:700">Carlos M. <span style="color:#f6a623">★★★★★</span></div>
+          <p class="muted">"Excellent service and genuine parts. Highly recommended."</p>
+        </div>
+      </div>
+
+      <div class="test-controls" aria-hidden="false" style="margin-top:12px">
+        <button class="test-btn" id="test-prev" aria-label="Previous testimonial">‹ Prev</button>
+        <div class="test-indicators" id="test-indicators" role="tablist" aria-label="Testimonial indicators"></div>
+        <button class="test-btn" id="test-next" aria-label="Next testimonial">Next ›</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="newsletter" class="section" aria-labelledby="newsletter-title">
+    <div class="section-header">
+      <h2 id="newsletter-title">Join our newsletter</h2>
+      <div class="small-muted">Get new arrivals and promos — once a week</div>
+    </div>
+
+    <div class="newsletter">
+      <div>
+        <strong>Be first to know about deals &amp; restocks</strong>
+        <div class="muted" style="margin-top:6px">We only send useful updates — unsubscribe anytime.</div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Thanks — placeholder signup');" aria-label="Subscribe to newsletter">
+        <input type="email" placeholder="Your email address" required>
+        <button class="btn primary" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="site-footer" role="contentinfo" style="margin-top:40px;padding:24px;background:#fff;border-top:1px solid #eee;color:var(--muted);text-align:center">
+    <div class="container">© 2025 Outboard Motors · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></div>
+  </footer>
+
+  <!-- keep your existing scripts intact below (I did not modify logic) -->
+  <script>
+    // small helpers (unchanged)
+    document.getElementById('hamburger').addEventListener('click', ()=>{ alert('Mobile menu placeholder — will implement later.'); });
+    const cartCountEl=document.getElementById('cart-count'); function setCartCount(n){ cartCountEl.innerText=String(n); } setCartCount(0);
+
+    // Promo close behavior (persist dismissal in sessionStorage)
+    (function(){
+      const promoBar = document.getElementById('promo-bar');
+      const closeBtn = document.getElementById('promo-close');
+      try {
+        if(sessionStorage.getItem('promo_closed') === '1'){ promoBar.style.display = 'none'; }
+      } catch(e){}
+      if(closeBtn){
+        closeBtn.addEventListener('click', ()=>{
+          promoBar.style.display = 'none';
+          try { sessionStorage.setItem('promo_closed','1'); } catch(e){}
+        });
+      }
+    })();
+
+    // --- NEW JS: featured products from JSON, brands clickable, testimonials carousel ----
+
+    (function(){
+      const JSON_PATH = 'products.json';
+      const featuredGrid = document.getElementById('featured-grid');
+      const brandsStrip = document.getElementById('brands-strip');
+
+      // format currency
+      function currency(n){ return '$' + Number(n||0).toLocaleString(); }
+      function escapeHtml(s){ return String(s||''); }
+
+      // fetch JSON safely
+      async function loadJson(){
+        try{
+          const r = await fetch(JSON_PATH, {cache:'no-cache'});
+          if(!r.ok) throw new Error('no json');
+          const j = await r.json();
+          return Array.isArray(j) ? j : [];
+        }catch(e){ console.warn('Could not load JSON at', JSON_PATH, e); return []; }
+      }
+
+      // build featured list: 2 items >= 5000 and 2 items < 5000
+      async function populateFeatured(){
+        const items = await loadJson();
+        if(!items.length) return; // keep fallback placeholders
+        // Normalize price numeric
+        items.forEach(p=> p._price = Number(p.price || p.cost || 0));
+        const above = items.filter(p=> p._price >= 5000).sort((a,b)=>b._price - a._price);
+        const below = items.filter(p=> p._price < 5000).sort((a,b)=>b._price - a._price);
+        const pick = [];
+        pick.push(...above.slice(0,2));
+        pick.push(...below.slice(0,2));
+        // fill if less than 4
+        if(pick.length < 4){
+          const remaining = items.filter(p=> !pick.includes(p)).sort((a,b)=>b._price - a._price);
+          while(pick.length < 4 && remaining.length) pick.push(remaining.shift());
+        }
+        // build DOM
+        featuredGrid.innerHTML = '';
+        pick.slice(0,4).forEach(prod => {
+          const card = document.createElement('div');
+          card.className = 'featured-card';
+          const img = prod.image || prod.imageUrl || prod.photo || 'https://placehold.co/800x500?text=No+Image';
+          const title = escapeHtml((prod.company ? prod.company + ' ' : '') + (prod.model || prod.name || prod.sku || 'Model'));
+          const hp = prod.horsepower || prod.hp || '';
+          const shaft = prod.shaftLengthInch || prod.shaft_length || prod.shaft || '';
+          const price = currency(prod._price || 0);
+          const id = prod.id || prod.sku || (prod.model ? prod.model.replace(/\s+/g,'-').toLowerCase() : '');
+          card.innerHTML = `
+            <img src="${escapeHtml(img)}" alt="${escapeHtml(title)}">
+            <h4>${escapeHtml(title)}</h4>
+            <div class="meta">${hp ? hp + ' HP' : ''}${shaft ? ' • ' + shaft : ''}</div>
+            <div class="cta-row">
+              <div style="font-weight:800;color:var(--accent)">${price}</div>
+              <div><a class="btn" href="search.html?id=${encodeURIComponent(id)}">View</a></div>
+            </div>
+          `;
+          featuredGrid.appendChild(card);
+        });
+      }
+
+      // brands clickable behavior: when clicked, open search.html?q=BrandName
+      function wireBrands(){
+        const pills = Array.from(brandsStrip.querySelectorAll('.brand-pill'));
+        pills.forEach(p=>{
+          p.addEventListener('click', (ev)=>{
+            // set visual active
+            pills.forEach(x=> x.classList.remove('active'));
+            p.classList.add('active');
+            const brand = p.dataset.brand || (p.textContent || '').trim();
+            // navigate to search page with brand as query
+            const q = encodeURIComponent(brand);
+            // open search page with brand as search input
+            window.location.href = `search.html?q=${q}`;
+          });
+        });
+      }
+
+      // testimonials carousel
+      function initTestimonials(){
+        const track = document.getElementById('testimonial-track');
+        if(!track) return;
+        const items = Array.from(track.children);
+        if(!items.length) return;
+        let idx = 0;
+        const indicatorsWrapper = document.getElementById('test-indicators');
+        // create indicators
+        items.forEach((it,i)=>{
+          const dot = document.createElement('button');
+          dot.className = 'indicator' + (i===0 ? ' active' : '');
+          dot.setAttribute('aria-label', 'Show testimonial ' + (i+1));
+          dot.dataset.index = String(i);
+          dot.addEventListener('click', ()=> { goTo(Number(dot.dataset.index)); resetTimer(); });
+          indicatorsWrapper.appendChild(dot);
+        });
+        const indicators = Array.from(indicatorsWrapper.querySelectorAll('.indicator'));
+        const prevBtn = document.getElementById('test-prev');
+        const nextBtn = document.getElementById('test-next');
+
+        function render(){
+          track.style.transform = `translateX(${-idx * 100}%)`;
+          indicators.forEach((d,i)=> d.classList.toggle('active', i===idx));
+        }
+        function goTo(i){
+          idx = (i + items.length) % items.length;
+          render();
+        }
+        prevBtn.addEventListener('click', ()=> { goTo(idx - 1); resetTimer(); });
+        nextBtn.addEventListener('click', ()=> { goTo(idx + 1); resetTimer(); });
+
+        let timer = null;
+        function startTimer(){ timer = setInterval(()=> { goTo(idx + 1); }, 4000); }
+        function resetTimer(){ if(timer) clearInterval(timer); startTimer(); }
+
+        // make it responsive on resize
+        window.addEventListener('resize', render);
+        render();
+        startTimer();
+      }
+
+      // Init
+      populateFeatured().catch(e=> console.warn(e));
+      wireBrands();
+      initTestimonials();
+
+    })();
+
+  </script>
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/694bd0836edca7197f963255/1jd82d0ui';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

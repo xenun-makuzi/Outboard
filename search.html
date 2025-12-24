@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outboard Motors — Search</title>
+  <meta name="description" content="Search Outboard Motors catalog for outboard motors by model, brand or horsepower.">
+  <style>
+    /* ---------- Theme variables ---------- */
+    :root{
+      --max:1200px;
+      --accent:#ec407a;
+      --card:#ffffff;
+      --muted:#6b6b6b;
+      --bg:#f7f8fa;
+      --shadow: 0 8px 24px rgba(18,24,32,0.06);
+      --radius:12px;
+      --gap:12px;
+      --text:#111;
+      --success:#27a844;
+      --danger:#d32f2f;
+    }
+
+    /* ---------- Reset & base ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%;overflow-x:hidden}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+      font-size:15px;
+    }
+
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; cursor:pointer; }
+
+    /* ---------- Header / Nav ---------- */
+    header.site-header{
+      position:sticky;
+      top:0;
+      z-index:60;
+      background:var(--card);
+      border-bottom:1px solid #eee;
+      box-shadow: 0 2px 6px rgba(10,10,10,0.02);
+    }
+    .nav-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      padding:10px 16px;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .brand .logo-placeholder{
+      width:140px;height:44px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;letter-spacing:1px;
+      flex-shrink:0;
+    }
+
+    nav.main-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    nav.main-nav a{ 
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: #333;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid #eee;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(10,10,10,0.02);
+    }
+    nav.main-nav a:hover{ 
+      background: #f7f7f7;
+      color: #111;
+      border-color: #ddd;
+    }
+
+    .spacer{flex:1;min-width:6px}
+    .search-inline{flex:1;min-width:140px;order:3}
+    .search-inline input{
+      width:100%;
+      padding:8px 10px;border-radius:10px;border:1px solid #eee;background:#fafafa;
+      outline:none;font-size:14px;
+    }
+
+    .icons{display:flex;gap:8px;align-items:center;order:2}
+    .icon-btn{
+      background:#fff;border:1px solid #eee;padding:6px 8px;border-radius:10px;font-size:14px;
+      box-shadow: 0 1px 3px rgba(10,10,10,0.02);
+      display:inline-flex;align-items:center;gap:8px;
+    }
+
+    /* hamburger */
+    .hamburger{
+      display:none;
+      background:#fff;border:1px solid #eee;padding:8px;border-radius:8px;cursor:pointer;font-size:18px;
+    }
+
+    @media(min-width:720px){
+      .brand .logo-placeholder{width:140px;height:44px;font-size:16px}
+      .search-inline{order:2;flex-basis:420px}
+      .icons{order:3}
+      .hamburger{display:none}
+    }
+    @media(max-width:719px){
+      .hamburger{display:block}
+      nav.main-nav{display:none}
+    }
+
+    /* ---------- Main container ---------- */
+    .container{max-width:var(--max);margin:12px auto;padding:0 12px}
+
+    .page-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+    h1.page-title{ font-size:20px; margin:0; font-weight:700 }
+    .muted{ color:var(--muted) }
+
+    /* ---------- Top filters bar ---------- */
+    .filters-top{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background:var(--card);
+      padding:10px;
+      border-radius:12px;
+      border:1px solid #eee;
+      box-shadow: var(--shadow);
+      margin-bottom:14px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:20;
+    }
+    .filters-col{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:0 }
+    .filters-col label{ font-size:14px; color:#333; display:flex; align-items:center; gap:8px; }
+    .filters-col select, .filters-col input[type="number"], .filters-col input[type="text"]{
+      padding:8px 10px; border-radius:10px; border:1px solid #eee; background:#fafafa;
+    }
+    .filters-col .chip{ padding:6px 10px; border-radius:8px; background:#f6f6f8; border:1px solid #eee; font-size:13px; color:#333; white-space:nowrap; }
+
+    .price-range { display:flex; gap:8px; align-items:center; }
+    .price-range input{ width:90px; padding:8px;border-radius:8px;border:1px solid #eee;background:#fff }
+
+    .filters-actions{ margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0; }
+    .btn{ padding:8px 12px; border-radius:10px; border:1px solid #eee; background:#fff; font-weight:600; font-size:14px }
+    .btn.primary{ background:var(--accent); color:#fff; border:none; }
+    .btn.ghost{ background:transparent; color:var(--muted); border:1px solid #f0f0f0; }
+
+    .filters-toggle{
+      background:#fff;border:1px solid #eee;padding:8px 10px;border-radius:10px;font-weight:700;color:#333;
+      box-shadow: 0 6px 18px rgba(12,18,24,0.06);
+      display:inline-flex;align-items:center;gap:6px;
+    }
+
+    /* ---------- Results grid ---------- */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      align-items:start;
+    }
+    @media(max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:700px){ .grid{grid-template-columns:1fr; gap:12px} }
+
+    /* product card */
+    .card{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      background:var(--card);
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid rgba(15,15,15,0.04);
+      box-shadow: 0 8px 20px rgba(12,18,24,0.04);
+      transition:transform .18s ease, box-shadow .18s ease;
+      min-height:200px;
+    }
+    .card:hover{ transform:translateY(-6px); box-shadow: 0 14px 40px rgba(12,18,24,0.08); }
+
+    .card .media{
+      position:relative;
+      width:100%;
+      height:160px;
+      background:#f3f3f3;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .card .media img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .25s ease; }
+    .card .media:hover img{ transform:scale(1.03) }
+
+    .card .body{
+      padding:10px 12px 12px 12px; display:flex; flex-direction:column; gap:6px;
+      flex:1;
+    }
+    .card .title{
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+    }
+    .card h3{ margin:0;font-size:15px;font-weight:700;color:#111; cursor:pointer }
+    .price-badge{
+      flex-shrink:0;
+      background:linear-gradient(180deg,var(--accent),#d84476);
+      color:white;font-weight:800;padding:6px 10px;border-radius:8px;font-size:14px;
+      box-shadow: 0 6px 18px rgba(236,111,142,0.18);
+    }
+
+    .card .specs{ 
+      color:var(--muted); font-size:13px; margin-top:4px; overflow:hidden; 
+      text-overflow:ellipsis; 
+      max-height: 2.6em; 
+      line-height:1.3;
+    }
+    
+    .card .description-preview{
+      color:#333; font-size:14px; margin-top:6px;
+      overflow:hidden; text-overflow:ellipsis;
+      display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient:vertical;
+      line-height:1.4;
+    }
+
+    .card .meta-row{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:auto; flex-wrap:wrap }
+
+    .card .actions{ display:flex; gap:8px; margin-left:auto; }
+    .chip{ font-size:12px; padding:6px 8px; border-radius:8px; background:#f6f6f8; color:#333; border:1px solid #eee; white-space:nowrap }
+
+    /* ---------- Product detail ---------- */
+    .product-media{
+      background:var(--card);padding:12px;border-radius:12px;border:1px solid #eee;box-shadow:var(--shadow);
+      text-align:center;
+    }
+    .product-media img{ width:100%; height:auto; max-height:520px; object-fit:contain; border-radius:8px; display:block; margin:0 auto; }
+
+    .product-desc{ background:var(--card); padding:12px; border-radius:12px; border:1px solid #eee; margin-top:12px; box-shadow:var(--shadow) }
+
+    .product-wrap { display:block; }
+
+    .product-buy{
+      background:var(--card);padding:14px;border-radius:12px;border:1px solid #eee; box-shadow:var(--shadow);
+      margin-top:12px;
+    }
+    .product-buy .price { font-size:20px;font-weight:900;color:var(--accent) }
+    .product-buy .stock {
+      font-weight:700;margin-top:8px;display:inline-block;padding:6px 8px;border-radius:8px;font-size:13px;
+      background:#f6fdf7;color:var(--success);border:1px solid rgba(39,168,68,0.12);
+    }
+    .product-buy .out{ background:#fff7f7;color:var(--danger); border:1px solid rgba(211,47,47,0.08) }
+
+    .spec-table{ width:100%; border-collapse:collapse; margin-top:12px }
+    .spec-table td{ padding:10px 8px; border-top:1px dashed #f0f0f0; font-size:14px; color:#333 }
+
+    /* ---------- Similar products ---------- */
+    .similar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:12px }
+    @media(max-width:980px){ .similar-grid{ grid-template-columns:repeat(2,1fr) } }
+    @media(max-width:520px){ .similar-grid{ grid-template-columns:1fr } }
+
+    .similar-card{ 
+      padding:12px; border-radius:12px; border:1px solid #eee; background:var(--card); 
+      box-shadow: 0 6px 18px rgba(12,18,24,0.04); text-align:left; cursor:pointer;
+      display:flex; flex-direction:column;
+    }
+    .similar-card img{ width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:10px; }
+    .similar-card .title{ font-weight:700; font-size:15px; margin-bottom:4px; }
+    .similar-card .specs{ color:var(--muted); font-size:13px; margin-bottom:8px; }
+    .similar-card .price{ font-weight:900; color:var(--accent); font-size:16px; margin-bottom:10px; }
+    .similar-card .add-cart-btn{ 
+      margin-top:auto; padding:8px; background:var(--accent); color:#fff; 
+      border:none; border-radius:8px; font-weight:600; cursor:pointer;
+    }
+
+    /* Reviews */
+    .reviews{ margin-top:40px; display:grid; gap:16px }
+    .review{ background:var(--card); padding:16px; border-radius:12px; border:1px solid #eee; box-shadow:0 6px 18px rgba(12,18,24,0.04) }
+    .review .meta{ font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center }
+    .review .stars{ color:#f6a623; font-size:18px; }
+
+    /* Global reviews at bottom */
+    .global-reviews{ margin-top:60px; padding-top:40px; border-top:1px solid #eee; }
+
+    /* Footer */
+    footer.site-footer{ margin-top:48px; padding:20px; background:#fff; border-top:1px solid #eee; color:var(--muted); text-align:center }
+
+    /* Desktop adjustments */
+    @media(min-width:980px){
+      .product-wrap{ display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+      .product-media img{ max-height:520px }
+      .filters-toggle{ display:none }
+      .filters-top{ padding:14px }
+    }
+
+    /* mobile menu */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 84%;
+      max-width: 360px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 6px 0 30px rgba(0,0,0,0.12);
+      z-index: 20000;
+      transition: left 240ms ease;
+      padding: 20px;
+      overflow:auto;
+    }
+    .mobile-menu.open { left: 0; }
+    .mobile-menu .close-mobile {
+      display:inline-block;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #eee;
+      background:#fff;
+      cursor:pointer;
+    }
+    .mobile-menu nav a { display:block; padding:12px 0; color:#111; text-decoration:none; font-weight:600; border-bottom:1px solid #f2f2f2; }
+  </style>
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="nav-inner">
+      <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+
+      <a class="brand" href="./" aria-label="Outboard Motors home">
+        <div class="logo-placeholder" aria-hidden="true">OUTBOARDMOTORS</div>
+        <span style="display:none">Outboard Motors</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="./">Home</a>
+        <a href="./shop.html">Shop</a>
+        <a href="./reviews.html">Reviews</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+
+      <div class="spacer" aria-hidden="true"></div>
+
+      <div class="icons">
+        <a id="cart-link" class="icon-btn" href="cart.html" aria-label="Cart">🛒 <span id="cart-count" style="font-weight:700">0</span></a>
+        <a id="account-link" class="icon-btn" href="login.html" aria-label="Login">👤</a>
+      </div>
+
+      <div class="search-inline" role="search" aria-label="Site search">
+        <form action="search.html" method="GET" id="top-search">
+          <input name="q" type="search" placeholder="Search model, brand or horsepower" aria-label="Search models and brands">
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <strong>Outboard Motors</strong>
+      <button id="closeMobile" class="close-mobile" aria-label="Close mobile menu">✕</button>
+    </div>
+    <nav>
+      <a href="./">Home</a>
+      <a href="./shop.html">Shop</a>
+      <a href="./reviews.html">Reviews</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="finance.html">Request Finance</a>
+    </nav>
+  </div>
+
+  <main class="container" id="main">
+    <div class="page-head">
+      <h1 class="page-title" id="page-title">Search</h1>
+      <div class="results-toolbar" style="display:flex;align-items:center;gap:8px">
+        <div id="results-info" class="results-info">Results</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label class="muted" for="sort" style="font-size:13px;margin-right:6px">Sort</label>
+          <select id="sort" style="padding:8px;border-radius:8px;border:1px solid #eee">
+            <option value="relevance">Relevance</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="hp-asc">HP: Low to High</option>
+            <option value="hp-desc">HP: High to Low</option>
+          </select>
+        </div>
+        <button id="filters-toggle" class="filters-toggle">Filters ▼</button>
+      </div>
+    </div>
+
+    <div class="filters-top" id="filters-top" style="display:none">
+      <!-- Filters will be injected here by JS -->
+    </div>
+
+    <div id="result-area">
+      <div class="grid" id="results-grid"></div>
+      
+      <!-- Global Customer Reviews Section -->
+      <div class="global-reviews">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Customer Reviews</h2>
+        <div class="reviews" id="global-reviews">
+          <div class="review">
+            <div class="meta">
+              <span>John D.</span>
+              <span class="stars">★★★★★</span>
+            </div>
+            <p>"Excellent service and fast shipping. The Yamaha 20HP runs perfectly!"</p>
+          </div>
+          <div class="review">
+            <div class="meta">
+              <span>Sarah M.</span>
+              <span class="stars">★★★★☆</span>
+            </div>
+            <p>"Great price on the Mercury 15HP. Very happy with performance and support."</p>
+          </div>
+          <div class="review">
+            <div class="meta">
+              <span>Mike R.</span>
+              <span class="stars">★★★★★</span>
+            </div>
+            <p>"Best deal I found online. The motor arrived in perfect condition."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="detail-area" style="display:none">
+      <div id="product-detail"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © 2025 Outboard Motors • All rights reserved
+  </footer>
+
+  <script>
+    // Utility functions
+    function qs(name){ const p=new URLSearchParams(location.search); return p.get(name); }
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    function currency(n){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n||0); }
+    function shaftLabel(inch){
+      if(!inch) return '';
+      const i = Number(inch);
+      return i === 15 ? '15" (Short)' : i === 20 ? '20" (Long)' : i === 25 ? '25" (Extra Long)' : inch + '"';
+    }
+
+    let PRODUCTS = [];
+
+    async function loadProductJson(){
+      try{
+        const res = await fetch('products.json');
+        if(!res.ok) throw new Error('Failed to load');
+        return await res.json();
+      }catch(e){
+        console.warn('products.json not found – using empty catalog');
+        return [];
+      }
+    }
+
+    function normalize(str){ return String(str||'').toLowerCase().trim(); }
+
+    function searchProducts(q){
+      q = normalize(q);
+      if(!q) return PRODUCTS.slice();
+      const qnum = parseFloat(q.replace(/[^\d.]/g,'')) || null;
+      return PRODUCTS
+        .map(p=>({
+          p,
+          score: [
+            normalize(p.model||'').includes(q) ? 60 : 0,
+            normalize(p.company||'').includes(q) ? 40 : 0,
+            String(p.horsepower||'').includes(q) ? 50 : 0,
+            qnum && Number(p.horsepower)===qnum ? 80 : 0
+          ].reduce((a,b)=>a+b,0)
+        }))
+        .filter(x=>x.score>0)
+        .sort((a,b)=>b.score-a.score)
+        .map(x=>x.p);
+    }
+
+    function buildTopFilters(q){
+      // Simplified – actual implementation would populate selects dynamically
+      document.getElementById('filters-top').innerHTML = '<div class="filters-col"><div class="chip">Advanced filters available in Shop</div></div>';
+    }
+
+    function readTopFilters(){ return ()=>true; } // placeholder
+
+    const filtersTop = document.getElementById('filters-top');
+    const filtersToggle = document.getElementById('filters-toggle');
+    const sortSelect = document.getElementById('sort');
+    const applyBtn = document.createElement('button'); // placeholder
+    const clearTopBtn = document.createElement('button'); // placeholder
+
+    function renderCard(product){
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.innerHTML = `
+        <div class="media"><img src="${escapeHtml(product.image || 'https://placehold.co/600x400?text=No+Image')}" alt="${escapeHtml((product.company||'')+' '+(product.model||''))}"></div>
+        <div class="body">
+          <div class="title">
+            <h3>${escapeHtml((product.company||'')+' '+(product.model||''))}</h3>
+            <div class="price-badge">${currency(product.price||0)}</div>
+          </div>
+          <div class="specs"></div>
+          <div class="description-preview"></div>
+          <div class="meta-row">
+            <div class="actions">
+              <div class="chip" data-chip="1"></div>
+              <div class="chip" data-chip="2"></div>
+            </div>
+            <div class="actions">
+              <button class="btn add-cart">Add to Cart</button>
+              <button class="btn ghost finance">Finance</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const specsText = [
+        product.horsepower ? product.horsepower + ' HP' : null,
+        product.shaftLengthInch ? shaftLabel(product.shaftLengthInch) : null,
+        product.starterType ? product.starterType : null,
+        product.trimType ? product.trimType : null,
+        product.engineType ? product.engineType : null,
+      ].filter(Boolean).join(' • ');
+      el.querySelector('.specs').innerText = specsText || 'No detailed specs available.';
+      
+      const desc = product.description || 'No detailed description available.';
+      el.querySelector('.description-preview').innerText = escapeHtml(desc);
+
+      const chip1 = el.querySelector('[data-chip="1"]');
+      const chip2 = el.querySelector('[data-chip="2"]');
+      chip1.innerText = product.trimType ? 'Trim: ' + escapeHtml(product.trimType) : '';
+      chip2.innerText = product.engineType ? 'Engine: ' + escapeHtml(product.engineType) : '';
+      if(!chip1.innerText) chip1.style.display = 'none';
+      if(!chip2.innerText) chip2.style.display = 'none';
+
+      // Click to detail
+      el.querySelector('.media').addEventListener('click', ()=> location.href = 'search.html?id=' + encodeURIComponent(product.id));
+      el.querySelector('h3').addEventListener('click', ()=> location.href = 'search.html?id=' + encodeURIComponent(product.id));
+
+      // Add to cart – now with full details
+      el.querySelector('.add-cart').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(window.AQUAWAVECart && typeof window.AQUAWAVECart.add === 'function'){
+          window.AQUAWAVECart.add({
+            id: product.id,
+            title: (product.company||'')+' '+(product.model||''),
+            price: product.price||0,
+            qty: 1,
+            image: product.image || 'https://placehold.co/600x400?text=No+Image',
+            horsepower: product.horsepower,
+            shaftLengthInch: product.shaftLengthInch,
+            starterType: product.starterType,
+            company: product.company,
+            model: product.model
+          });
+          alert('Added ' + product.model + ' to cart.');
+        }
+      });
+      
+      el.querySelector('.finance').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        location.href = 'finance.html?id=' + encodeURIComponent(product.id);
+      });
+
+      return el;
+    }
+
+    function showResults(list, q){
+      const grid = document.getElementById('results-grid');
+      grid.innerHTML = '';
+      document.getElementById('detail-area').style.display = 'none';
+      document.getElementById('result-area').style.display = 'block';
+      
+      if(!list || !list.length){
+        document.getElementById('results-info').innerText = 'No results found';
+        grid.innerHTML = '<div class="muted">No products match your search. Try other keywords.</div>';
+        return;
+      }
+
+      document.getElementById('results-info').innerText = `${list.length} result${list.length>1?'s':''} for "${q || ''}"`;
+      list.forEach(p=> grid.appendChild(renderCard(p)));
+    }
+
+    function renderProductDetail(product){
+      document.getElementById('page-title').innerText = (product.company ? product.company + ' ' : '') + (product.model || 'Product');
+      document.title = product.company + ' ' + product.model + ' — Outboard Motors';
+      document.getElementById('results-info').innerText = '';
+      
+      document.getElementById('detail-area').style.display = 'block';
+      document.getElementById('result-area').style.display = 'none';
+
+      const wrapper = document.getElementById('product-detail');
+      wrapper.innerHTML = `
+        <div class="product-wrap">
+          <div id="product-media-column">
+            <div class="product-media" aria-hidden="false">
+              <img src="${escapeHtml(product.image || 'https://placehold.co/1200x800?text=No+Image')}" alt="${escapeHtml(product.company+' '+product.model)}">
+            </div>
+          </div>
+          <div id="product-info-column">
+            <div class="product-buy">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div class="price">${currency(product.price || 0)}</div>
+                <div class="stock ${product.stock > 0 ? '' : 'out'}">${product.stock > 0 ? product.stock + ' in stock' : 'Out of Stock'}</div>
+              </div>
+              <div class="actions">
+                <button id="addToCartBtn" class="btn primary">Add to Cart</button>
+                <button id="requestFinance" class="btn">Request Finance</button>
+              </div>
+            </div>
+
+            <div class="product-desc" style="margin-top:12px">
+              <p class="muted" style="margin-top:6px">Model: ${escapeHtml(product.model || '')} • SKU: ${escapeHtml(product.sku || '')}</p>
+              <h3 style="margin-top:10px">Description</h3>
+              <p style="color:#333">${escapeHtml(product.description || 'No detailed description available.')}</p>
+            </div>
+
+            <div class="product-specs">
+              <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid #eee; box-shadow:var(--shadow)">
+                <h4 style="margin-top:0">Full Specs</h4>
+                <table class="spec-table">
+                  <tr><td>Horsepower</td><td>${escapeHtml(String(product.horsepower || ''))}</td></tr>
+                  <tr><td>Shaft Length</td><td>${escapeHtml(shaftLabel(product.shaftLengthInch || product.shaft_length) || '')}</td></tr>
+                  <tr><td>Starter</td><td>${escapeHtml(product.starterType || '')}</td></tr>
+                  <tr><td>Trim</td><td>${escapeHtml(product.trimType || '')}</td></tr>
+                  <tr><td>Engine Type</td><td>${escapeHtml(product.engineType || '')}</td></tr>
+                  <tr><td>Weight (lbs)</td><td>${escapeHtml(String(product.weightLbs || ''))}</td></tr>
+                  <tr><td>Cylinders</td><td>${escapeHtml(String(product.cylinders || ''))}</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:40px">
+          <h2 style="font-size:20px;font-weight:700">Similar Products</h2>
+          <div class="similar-grid" id="similar"></div>
+        </div>
+        <div style="margin-top:40px">
+          <h2 style="font-size:20px;font-weight:700">Customer Reviews</h2>
+          <div class="reviews" id="reviews"></div>
+        </div>
+      `;
+      
+      document.getElementById('addToCartBtn').addEventListener('click', ()=>{
+        if(window.AQUAWAVECart && typeof window.AQUAWAVECart.add === 'function'){
+          window.AQUAWAVECart.add({
+            id: product.id, title: (product.company||'')+' '+(product.model||''), price: product.price||0, qty: 1, image: product.image,
+            horsepower: product.horsepower, shaftLengthInch: product.shaftLengthInch, starterType: product.starterType, company: product.company, model: product.model
+          });
+          alert('Added ' + product.model + ' to cart.');
+        }
+      });
+      document.getElementById('requestFinance').addEventListener('click', ()=>{
+        location.href = 'finance.html?id=' + encodeURIComponent(product.id);
+      });
+      renderSimilar(product);
+      renderReviews(product);
+    }
+
+    function renderSimilar(product){
+      const simEl = document.getElementById('similar');
+      simEl.innerHTML = '';
+      const candidates = PRODUCTS.filter(p=> p.id !== product.id);
+
+      function score(p){
+        let s = 0;
+        if(p.company === product.company) s += 40;
+        if(p.shaftLengthInch === product.shaftLengthInch) s += 15;
+        const hpDiff = Math.abs((p.horsepower||0) - (product.horsepower||0));
+        s += Math.max(0, 30 - hpDiff);
+        return s;
+      }
+
+      const ranked = candidates.map(p=>({p, s: score(p)})).sort((a,b)=>b.s - a.s).slice(0,6);
+      ranked.forEach(r=>{
+        const p = r.p;
+        const div = document.createElement('div');
+        div.className = 'similar-card';
+        div.innerHTML = `
+          <img src="${escapeHtml(p.image||'https://placehold.co/600x400?text=No+Image')}" alt="${escapeHtml(p.model||'')}">
+          <div class="title">${escapeHtml((p.company||'')+' '+(p.model||''))}</div>
+          <div class="specs">${p.horsepower ? p.horsepower + ' HP' : ''}${p.shaftLengthInch ? ' • ' + shaftLabel(p.shaftLengthInch) : ''}</div>
+          <div class="price">${currency(p.price||0)}</div>
+          <button class="add-cart-btn">Add to Cart</button>
+        `;
+        div.addEventListener('click', (e)=>{
+          if(!e.target.classList.contains('add-cart-btn')) {
+            location.href = 'search.html?id=' + encodeURIComponent(p.id);
+          }
+        });
+        div.querySelector('.add-cart-btn').addEventListener('click', (e)=>{
+          e.stopPropagation();
+          if(window.AQUAWAVECart && typeof window.AQUAWAVECart.add === 'function'){
+            window.AQUAWAVECart.add({
+              id: p.id,
+              title: (p.company||'')+' '+(p.model||''),
+              price: p.price||0,
+              qty: 1,
+              image: p.image,
+              horsepower: p.horsepower,
+              shaftLengthInch: p.shaftLengthInch,
+              starterType: p.starterType,
+              company: p.company,
+              model: p.model
+            });
+            alert('Added ' + p.model + ' to cart.');
+          }
+        });
+        simEl.appendChild(div);
+      });
+    }
+
+    function renderReviews(product){
+      const reviewsEl = document.getElementById('reviews');
+      reviewsEl.innerHTML = '';
+      const reviews = Array.isArray(product.reviews) && product.reviews.length ? product.reviews : [];
+
+      if(!reviews.length){
+        reviewsEl.innerHTML = '<div class="muted" style="text-align:center;padding:20px 0">No reviews yet for this product.</div>';
+        return;
+      }
+      
+      reviews.forEach(r=>{
+        const div = document.createElement('div');
+        div.className = 'review';
+        const stars = '★'.repeat(Math.round(r.rating || 5)) + '☆'.repeat(5 - Math.round(r.rating || 5));
+        div.innerHTML = `
+          <div class="meta">
+            <span>${escapeHtml(r.author || 'Anonymous')}</span>
+            <span class="stars">${stars}</span>
+          </div>
+          <p>${escapeHtml(r.comment || '')}</p>
+        `;
+        reviewsEl.appendChild(div);
+      });
+    }
+
+    // --- Init ---
+    async function init(){
+      PRODUCTS = await loadProductJson();
+      const id = qs('id');
+      const q = qs('q');
+
+      if(id){
+        const product = PRODUCTS.find(p => String(p.id) === String(id));
+        if(product){
+          renderProductDetail(product);
+        } else {
+          document.getElementById('page-title').innerText = 'Product Not Found';
+          document.getElementById('results-grid').innerHTML = '<div class="muted" style="padding:40px;text-align:center">Product not found. <a href="search.html">Go back to search.</a></div>';
+          document.getElementById('detail-area').style.display = 'none';
+        }
+      } else {
+        let list = q ? searchProducts(q) : PRODUCTS.slice(0,60);
+        
+        const mode = sortSelect.value;
+        if(mode === 'price-asc') list.sort((a,b)=>(a.price||0)-(b.price||0));
+        else if(mode === 'price-desc') list.sort((a,b)=>(b.price||0)-(a.price||0));
+        else if(mode === 'hp-asc') list.sort((a,b)=>(a.horsepower||0)-(b.horsepower||0));
+        else if(mode === 'hp-desc') list.sort((a,b)=>(b.horsepower||0)-(a.horsepower||0));
+        
+        showResults(list, q);
+        buildTopFilters(q);
+      }
+    }
+
+    // Filter toggle
+    let collapsed = true;
+    function updateFilterVisibility(){ filtersTop.style.display = collapsed ? 'none' : 'flex'; }
+    updateFilterVisibility();
+
+    filtersToggle.addEventListener('click', ()=>{
+      collapsed = !collapsed;
+      filtersToggle.innerHTML = collapsed ? 'Filters ▼' : 'Filters ▲';
+      updateFilterVisibility();
+    });
+
+    sortSelect.addEventListener('change', ()=>{
+      const currentQ = qs('q') || '';
+      let list = currentQ ? searchProducts(currentQ) : PRODUCTS.slice();
+      const mode = sortSelect.value;
+      if(mode === 'price-asc') list.sort((a,b)=>(a.price||0)-(b.price||0));
+      else if(mode === 'price-desc') list.sort((a,b)=>(b.price||0)-(a.price||0));
+      else if(mode === 'hp-asc') list.sort((a,b)=>(a.horsepower||0)-(b.horsepower||0));
+      else if(mode === 'hp-desc') list.sort((a,b)=>(b.horsepower||0)-(a.horsepower||0));
+      showResults(list, currentQ);
+    });
+
+    // Cart badge
+    const cartCountEl = document.getElementById('cart-count');
+    function computeCountFromStorage(){
+      try{
+        const raw = localStorage.getItem('AQUAWAVE_cart');
+        const arr = raw ? JSON.parse(raw) : [];
+        return arr.reduce((acc, item) => acc + (Number(item.qty || 1)), 0);
+      }catch(e){ return 0; }
+    }
+    function refreshCartBadge(){
+      const n = computeCountFromStorage();
+      if(cartCountEl) cartCountEl.innerText = String(n);
+    }
+
+    if(!window.AQUAWAVECart){
+      window.AQUAWAVECart = {
+        add(item){
+          try{
+            const raw = localStorage.getItem('AQUAWAVE_cart');
+            const arr = raw ? JSON.parse(raw) : [];
+            if(!item || !item.id) return;
+            const found = arr.find(x=> String(x.id) === String(item.id));
+            if(found){
+              found.qty = (Number(found.qty) || 0) + (Number(item.qty) || 1);
+            } else {
+              arr.push({ id: item.id, title: item.title || item.id, price: item.price || 0, qty: Number(item.qty) || 1, image: item.image || '' });
+            }
+            localStorage.setItem('AQUAWAVE_cart', JSON.stringify(arr));
+            refreshCartBadge();
+          }catch(e){ console.warn('AQUAWAVECart.add error', e); }
+        },
+        clear(){
+          localStorage.removeItem('AQUAWAVE_cart');
+          refreshCartBadge();
+        }
+      };
+    }
+
+    window.setCartCount = function(n){ try{ if(cartCountEl) cartCountEl.innerText = String(n); } catch(e){} };
+
+    refreshCartBadge();
+    window.addEventListener('storage', (e)=> {
+      if(e.key === 'AQUAWAVE_cart') refreshCartBadge();
+    });
+
+    // Hamburger menu functionality – FIXED
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMobile = document.getElementById('closeMobile');
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+    });
+
+    closeMobile.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+    });
+
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

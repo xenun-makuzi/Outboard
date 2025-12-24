@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AquaWave Motors — Financing Application</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#C6A667;--bg:#0b0b0b;--card:#000;--muted:#bdbdbd}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Poppins,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:var(--bg);color:#fff}
+    .container{max-width:980px;margin:28px auto;padding:20px}
+
+    header{display:flex;gap:18px;align-items:center}
+    .logo-placeholder{width:96px;height:96px;border-radius:8px;border:2px dashed var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:600}
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+
+    .card{background:var(--card);border:1px solid rgba(198,166,103,0.14);padding:28px;border-radius:12px;margin-top:18px}
+    .section{margin-top:18px}
+    .section h2{color:var(--gold);font-size:15px;margin:0 0 10px 0;border-bottom:1px solid rgba(198,166,103,0.12);padding-bottom:8px}
+
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    label{font-size:13px;color:#ddd}
+    input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=file],select,textarea{width:100%;padding:10px;border-radius:8px;border:none;background:#0f0f0f;color:#fff;font-size:14px}
+    textarea{min-height:80px;resize:vertical}
+
+    .full{grid-column:1/-1}
+    .muted{color:var(--muted);font-size:12px;margin-top:6px}
+
+    .submit-row{display:flex;gap:12px;align-items:center;margin-top:18px}
+    .btn{background:var(--gold);color:#000;padding:12px 18px;border-radius:9px;border:none;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;color:var(--gold);border:1px solid rgba(198,166,103,0.18)}
+
+    .consent{font-size:13px;color:var(--muted);margin-top:12px}
+    .logo-placeholder{
+      width:140px; height:44px; border-radius:10px;
+      background:linear-gradient(90deg,#f1f1f1,#fafafa);
+      display:flex; align-items:center; justify-content:center; color:#999; font-weight:800;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+      overflow:hidden;
+    }
+
+    .logo-placeholder img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: inherit;
+    }
+
+    .intro { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+
+    /* *** CORRECTION 1: New class to hide elements via JavaScript *** */
+    .hide-on-pdf {
+      display: none !important;
+    }
+    
+    /* responsive */
+    @media(max-width:720px){
+      .grid{grid-template-columns:1fr}
+      .logo-placeholder{width:72px;height:72px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo-placeholder">
+      <img src="logo.jpg" alt="AquaWave Motors logo">
+    </div>
+    <div>
+      <h1>Outboard Motors</h1>
+      <div class="sub">Financing Application </div>
+    </div>
+  </header>
+
+  <div class="card" id="formContent">
+    <p class="intro">Please complete the financing application below. Fill in all required fields and attach any supporting documents where necessary. You can edit this paragraph later.</p>
+
+    <form id="financingForm" class="form" enctype="multipart/form-data">
+
+      <div class="section">
+        <h2>Motor Board Information</h2>
+        <div class="grid">
+          <div>
+            <label>Condition</label>
+            <select id="condition" name="condition">
+              <option>New</option>
+              <option>Used</option>
+            </select>
+          </div>
+          
+          <div>
+            <label>Model</label>
+            <input type="text" id="model" name="model" />
+          </div>
+          <div>
+            <label>Down Payment (USD)</label>
+            <input type="number" id="downpayment" name="downpayment" />
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Applicant Information</h2>
+        <div class="grid">
+          <div>
+            <label>Full Name</label>
+            <input type="text" id="fullname" name="fullname" />
+          </div>
+          <div>
+            <label>Email Address</label>
+            <input type="email" id="email" name="email" />
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input type="tel" id="phone" name="phone" />
+          </div>
+          <div>
+            <label>Date of Birth</label>
+            <input type="date" id="dob" name="dob" />
+          </div>
+          <div>
+            <label>Government ID / Driver's License</label>
+            <input type="text" id="license" name="license" />
+          </div>
+
+          <div>
+            <label>Gender</label>
+            <select id="gender" name="gender"><option>Prefer not to say</option><option>Male</option><option>Female</option></select>
+          </div>
+          <div>
+            <label>Marital Status</label>
+            <select id="marital" name="marital"><option>Single</option><option>Married</option><option>Other</option></select>
+          </div>
+
+          <div class="full">
+            <label>Residential Address</label>
+            <input type="text" id="address" name="address" />
+          </div>
+          <div>
+            <label>City / State / ZIP</label>
+            <input type="text" id="citystate" name="citystate" />
+          </div>
+          <div>
+            <label>Time at Current Residence</label>
+            <input type="text" id="residencetime" name="residencetime" placeholder="e.g., 2 years" />
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Housing & Banking Information</h2>
+        <div class="grid">
+          <div>
+            <label>Rent / Own</label>
+            <select id="rentown" name="rentown"><option>Rent</option><option>Own</option><option>Other</option></select>
+          </div>
+          <div>
+            <label>Monthly Rent / Mortgage (USD)</label>
+            <input type="number" id="rentamount" name="rentamount" />
+          </div>
+
+          <div>
+            <label>Bank Name</label>
+            <input type="text" id="bankname" name="bankname" />
+          </div>
+          <div>
+            <label>Account Type</label>
+            <select id="accounttype" name="accounttype"><option>Checking</option><option>Savings</option><option>Business</option></select>
+          </div>
+          
+          <div>
+            <label>Account Number</label>
+            <input type="text" id="accountnumber" name="accountnumber" />
+          </div>
+
+          
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Employment & Income</h2>
+        <div class="grid">
+          <div>
+            <label>Employer Name</label>
+            <input type="text" id="employer" name="employer" />
+          </div>
+          <div>
+            <label>Employer Phone</label>
+            <input type="tel" id="employerphone" name="employerphone" />
+          </div>
+          <div>
+            <label>Occupation / Job Title</label>
+            <input type="text" id="occupation" name="occupation" />
+          </div>
+          <div>
+            <label>Time at Employer</label>
+            <input type="text" id="employertime" name="employertime" placeholder="e.g., 3 years" />
+          </div>
+          <div>
+            <label>Monthly Income (USD)</label>
+            <input type="number" id="monthlyincome" name="monthlyincome" />
+          </div>
+          <div>
+            <label>Other Income (USD)</label>
+            <input type="number" id="otherincome" name="otherincome" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>References</h2>
+        <div class="grid">
+          <div>
+            <label>Reference 1 Name</label>
+            <input type="text" id="ref1name" name="ref1name" />
+          </div>
+          <div>
+            <label>Reference 1 Phone</label>
+            <input type="tel" id="ref1phone" name="ref1phone" />
+          </div>
+          <div>
+            <label>Reference 1 Relationship</label>
+            <input type="text" id="ref1rel" name="ref1rel" />
+          </div>
+
+        
+      </div>
+
+      <div class="section">
+        <h2>Financing Plan</h2>
+        <div class="grid">
+          <div>
+            <label>Initial Deposit (USD)</label>
+            <input type="number" id="initialdeposit" name="initialdeposit" />
+          </div>
+          <div>
+            <label>Installment Preference</label>
+            <select id="installmentType" name="installmentType"><option>Weekly</option><option>Monthly</option></select>
+          </div>
+          <div>
+            <label>Amount Per Installment (USD)</label>
+            <input type="number" id="installmentAmount" name="installmentAmount" />
+          </div>
+          <div>
+            <label>Duration (Months)</label>
+            <input type="number" id="duration" name="duration" />
+          </div>
+
+          <div class="full">
+            <label>Upload Proof of Initial Deposit (image/pdf)</label>
+            <input type="file" id="proof" name="customer_proof" accept="image/*,application/pdf" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Consent & Authorization</h2>
+        <p class="consent">I certify under penalty of perjury that the information provided is true and correct. I authorize AquaWave Motors to verify credit, employment, and income information. I understand this application does not guarantee financing approval.</p>
+        <div class="grid">
+          <div>
+            <label>Applicant Initials</label>
+            <input type="text" id="initials" name="initials" />
+          </div>
+          <div>
+            <label>Today's Date</label>
+            <input type="date" id="appdate" name="appdate" />
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <label>Signature (Type Full Name as Electronic Signature)</label>
+          <input type="text" id="esign" name="esign" placeholder="Type full name" />
+        </div>
+
+      </div>
+
+      <input type="file" id="pdfAttachment" name="attachments[0]" style="display:none" />
+
+      <div class="submit-row">
+        <button type="button" id="previewBtn" class="btn ghost">Preview PDF</button>
+        <button type="submit" class="btn">Submit & Email PDF</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  emailjs.init('PUBLIC_KEY_PLACEHOLDER'); // replace with your public key
+
+  // generate PDF blob of the #financingForm element
+  async function generatePDFBlob(){
+    // Targets only the form content
+    const element = document.getElementById('financingForm');
+
+    // *** CORRECTION 2a: Find and hide the submit row BEFORE conversion ***
+    const submitRow = element.querySelector('.submit-row');
+    if (submitRow) {
+      submitRow.classList.add('hide-on-pdf');
+    }
+    
+    const opt = {
+      margin: 0.5, 
+      filename: 'Financing_Application.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    const pdfBlob = await html2pdf().from(element).set(opt).outputPdf('blob');
+
+    // *** CORRECTION 2b: Show the submit row again AFTER conversion ***
+    if (submitRow) {
+      submitRow.classList.remove('hide-on-pdf');
+    }
+
+    return pdfBlob;
+  }
+
+  // Preview PDF in new tab
+  document.getElementById('previewBtn').addEventListener('click', async function(){
+    const blob = await generatePDFBlob();
+    const url = URL.createObjectURL(blob);
+    window.open(url);
+  });
+
+  // On submit: generate PDF, attach to hidden file input, then sendForm
+  document.getElementById('financingForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    try{
+      // create PDF blob
+      const pdfBlob = await generatePDFBlob();
+
+      // put blob into hidden file input named attachments[0]
+      const dt = new DataTransfer();
+      const file = new File([pdfBlob], 'Financing_Application.pdf', {type:'application/pdf'});
+      dt.items.add(file);
+      const hiddenInput = document.getElementById('pdfAttachment');
+      hiddenInput.files = dt.files;
+
+      // finally send form using EmailJS (sendForm will include attachments[0])
+      const serviceID = 'SERVICE_ID_PLACEHOLDER';
+      const templateID = 'TEMPLATE_ID_PLACEHOLDER';
+      const form = document.getElementById('financingForm');
+
+      // optional: show loading
+      document.querySelector('.btn').disabled = true;
+      document.querySelector('.btn').textContent = 'Sending...';
+
+      emailjs.sendForm(serviceID, templateID, form)
+        .then(function(){
+          alert('Application submitted & emailed successfully');
+          document.querySelector('.btn').disabled = false;
+          document.querySelector('.btn').textContent = 'Submit & Email PDF';
+          form.reset();
+        }, function(error){
+          alert('Failed to send: ' + JSON.stringify(error));
+          document.querySelector('.btn').disabled = false;
+          document.querySelector('.btn').textContent = 'Submit & Email PDF';
+        });
+
+    }catch(err){
+      alert('Error generating PDF: ' + err);
+    }
+  });
+</script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/694bd0836edca7197f963255/1jd82d0ui';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

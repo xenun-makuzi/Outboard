@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OutboardMotors — Cart</title>
+  <meta name="description" content="Your Outboard Motors cart. Edit quantities, apply promo NEWGUY for 8% off, and proceed to checkout.">
+  <style>
+    :root{
+      --max:1200px;
+      --accent:#ec407a;
+      --bg:#f7f8fa;
+      --card:#fff;
+      --muted:#6b6b6b;
+      --success:#27a844;
+      --danger:#d32f2f;
+      --shadow: 0 8px 28px rgba(18,24,32,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#111;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:20px auto;padding:16px}
+    header{background:var(--card);border-bottom:1px solid #eee;position:sticky;top:0;z-index:50;padding:12px 0}
+    .nav-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:12px;padding:0 16px}
+    .brand{font-weight:800}
+    .spacer{flex:1}
+    .icon-btn{display:inline-flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;border:1px solid #eee}
+    h1{margin:0 0 8px 0;font-size:20px}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+    /* Cart list */
+    .cart-list{background:var(--card);padding:12px;border-radius:12px;border:1px solid #eee;box-shadow:var(--shadow)}
+    .cart-item{display:flex;gap:12px;padding:12px;border-bottom:1px solid #f1f1f1;align-items:flex-start}
+    .cart-item:last-child{border-bottom:none}
+    .thumb{width:110px;height:80px;flex-shrink:0;border-radius:8px;background:#f3f3f3;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .item-main{flex:1;min-width:0;display:flex;flex-direction:column}
+    .item-title{font-weight:700;margin:0 0 6px 0;font-size:16px;word-break:break-word}
+    .item-specs{color:var(--muted);font-size:13px;margin-bottom:8px}
+    .price{font-weight:900;color:var(--accent)}
+    .qty-controls{display:flex;gap:8px;align-items:center}
+    .qty-controls button{padding:6px 10px;border-radius:8px;border:1px solid #eee;background:#fff;cursor:pointer}
+    .qty-input{width:56px;padding:6px;border-radius:8px;border:1px solid #eee;text-align:center}
+    .remove-btn{background:transparent;border:none;color:var(--danger);cursor:pointer;font-weight:700}
+    .small-muted{color:var(--muted);font-size:13px}
+
+    /* summary */
+    .summary{background:var(--card);padding:16px;border-radius:12px;border:1px solid #eee;box-shadow:var(--shadow);height:fit-content}
+    .summary h3{margin:0 0 8px 0}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px dashed #f6f6f6}
+    .summary-row:first-of-type{border-top:none;padding-top:0}
+    .total{font-size:18px;font-weight:900;color:#111}
+    .promo-row{display:flex;gap:8px;margin-top:8px}
+    .promo-row input{flex:1;padding:8px;border-radius:8px;border:1px solid #eee}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid #eee;background:#fff;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--accent);color:#fff;border:none}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .muted{color:var(--muted)}
+
+    /* empty cart */
+    .empty{background:var(--card);padding:28px;border-radius:12px;border:1px dashed #eee;text-align:center;color:var(--muted)}
+
+    /* contact & shipping form */
+    .contact-form, .shipping-form{margin-top:16px;padding:12px;background:#fff;border-radius:10px;border:1px solid #eee}
+    .form-row{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+    .form-row input,.form-row textarea{flex:1;min-width:200px;padding:10px;border-radius:8px;border:1px solid #eee}
+    textarea{min-height:80px;resize:vertical}
+    .required{color:var(--danger);font-size:12px;margin-top:4px;display:none}
+    .error-border{border-color:var(--danger)!important}
+
+    /* small helpers */
+    .right{text-align:right}
+    .top-note{background:linear-gradient(90deg,#fffaf6,#fff0f6);padding:8px 16px;border-bottom:1px solid #fdecec;font-size:14px;color:#5a2b2b;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top-note">Use code <strong>NEWGUY</strong> for 7% off your order — applied in cart</div>
+    <div class="nav-inner">
+      <div class="brand">Outboard Motors</div>
+      <div class="spacer"></div>
+      <a class="icon-btn" href="shop.html">← Continue shopping</a>
+      <a id="cart-btn" class="icon-btn" href="cart.html" aria-label="Cart">🛒 <span id="cart-count">0</span></a>
+      <a class="icon-btn" href="login.html">👤</a>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+    <h1>Your Cart</h1>
+
+    <div class="grid">
+      <div>
+        <div id="cart-area" class="cart-list" aria-live="polite"></div>
+
+        <!-- Contact Information (Always Required) -->
+        <div class="contact-form">
+          <h3 style="margin:0 0 12px;font-size:16px">Contact Information</h3>
+          <div class="form-row">
+            <input id="contact-name" type="text" placeholder="Full Name *" />
+          </div>
+          <div class="required" id="req-name">Name is required</div>
+
+          <div class="form-row">
+            <input id="contact-email" type="email" placeholder="Email *" />
+          </div>
+          <div class="required" id="req-email">Valid email is required</div>
+
+          <div class="form-row">
+            <input id="contact-phone" type="tel" placeholder="Phone Number *" />
+          </div>
+          <div class="required" id="req-phone">Phone number is required</div>
+        </div>
+
+        <!-- Shipping Option -->
+        <div style="margin-top:16px">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:700">
+            <input type="checkbox" id="require-shipping"> <span>Require shipping?</span>
+          </label>
+
+          <div id="shipping-form-wrap" style="display:none;margin-top:12px">
+            <div class="shipping-form">
+              <div class="muted" style="margin-bottom:8px">Shipping costs $500 for orders ≤ $4000. Orders above $4000 ship free.</div>
+              <div class="form-row">
+                <textarea id="ship-address" placeholder="Shipping Address (street, city, state, postal code) *"></textarea>
+              </div>
+              <div class="required" id="req-address">Shipping address is required</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <div>
+            <button id="clear-cart" class="btn">Clear cart</button>
+            <button id="continue-shopping" class="btn" onclick="location.href='shop.html'">Continue shopping</button>
+          </div>
+          <div class="muted">All prices in USD</div>
+        </div>
+      </div>
+
+      <aside class="summary" aria-labelledby="summary-title">
+        <h3 id="summary-title">Order summary</h3>
+
+        <div class="summary-row">
+          <div class="muted">Subtotal</div>
+          <div id="subtotal" class="muted">$0</div>
+        </div>
+
+        <div class="summary-row" id="shipping-row">
+          <div class="muted">Shipping</div>
+          <div id="shipping-amount" class="muted">$0</div>
+        </div>
+
+        <div class="summary-row">
+          <div class="muted">Promo</div>
+          <div id="promo-amount" class="muted">—</div>
+        </div>
+
+        <div class="summary-row" style="border-top:1px solid #f3f3f3;padding-top:12px">
+          <div class="total">Total</div>
+          <div id="grand-total" class="total">$0</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label style="display:block;font-weight:700;margin-bottom:6px">Promo code</label>
+          <div class="promo-row">
+            <input id="promo-code" placeholder="Enter promo (try NEWGUY)">
+            <button id="apply-promo" class="btn">Apply</button>
+          </div>
+          <div id="promo-feedback" class="muted" style="margin-top:8px"></div>
+        </div>
+
+        <div class="actions">
+          <button id="proceed-btn" class="btn primary">Proceed to checkout</button>
+          <button id="save-btn" class="btn">Save for later</button>
+        </div>
+
+        <div id="notice" class="muted" style="margin-top:12px;font-size:13px">We'll use your contact info to send order confirmation and updates.</div>
+      </aside>
+    </div>
+  </main>
+
+  <footer style="max-width:var(--max);margin:20px auto;padding:16px;text-align:center;color:var(--muted)">© 2025 AQUAWAVE Motors · Terms · Privacy</footer>
+
+  <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script> 
+
+  <script>
+    (function(){
+      const EMAILJS_USER_ID = 'chtDF4zLXFovmPH_-';
+      const EMAILJS_SERVICE_ID = 'Outboard';
+      const EMAILJS_TEMPLATE_ID = 'template_6hdx20d';
+      
+      const SHIPPING_FLAT = 500;
+      const SHIPPING_FREE_THRESHOLD = 4000;
+      const PROMO_CODE = 'NEWGUY';
+      const PROMO_DISCOUNT = 0.07;
+
+      // Elements
+      const cartArea = document.getElementById('cart-area');
+      const subtotalEl = document.getElementById('subtotal');
+      const shippingAmountEl = document.getElementById('shipping-amount');
+      const promoAmountEl = document.getElementById('promo-amount');
+      const grandTotalEl = document.getElementById('grand-total');
+      const promoInput = document.getElementById('promo-code');
+      const applyPromoBtn = document.getElementById('apply-promo');
+      const promoFeedback = document.getElementById('promo-feedback');
+      const requireShippingChk = document.getElementById('require-shipping');
+      const shippingFormWrap = document.getElementById('shipping-form-wrap');
+      const shipAddress = document.getElementById('ship-address');
+      const contactName = document.getElementById('contact-name');
+      const contactEmail = document.getElementById('contact-email');
+      const contactPhone = document.getElementById('contact-phone');
+      const proceedBtn = document.getElementById('proceed-btn');
+      const clearCartBtn = document.getElementById('clear-cart');
+      const cartCountEl = document.getElementById('cart-count');
+
+      // Validation messages
+      const reqName = document.getElementById('req-name');
+      const reqEmail = document.getElementById('req-email');
+      const reqPhone = document.getElementById('req-phone');
+      const reqAddress = document.getElementById('req-address');
+
+      let cart = [];
+      let shippingRequested = false;
+      let promo = { code: '', percent: 0, amount: 0 };
+
+      function format(n){ return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n); }
+      function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+
+      function computeSubtotal(){ return cart.reduce((acc, item) => acc + (Number(item.price || 0) * Number(item.qty || 1)), 0); }
+
+      function computeCountFromStorage(){
+        try{
+          const raw = localStorage.getItem('AQUAWAVE_cart');
+          const arr = raw ? JSON.parse(raw) : [];
+          return arr.reduce((acc, item) => acc + (Number(item.qty || 1)), 0);
+        }catch(e){ return 0; }
+      }
+
+      function updateCartFromStorage(){
+        try{
+          const raw = localStorage.getItem('AQUAWAVE_cart');
+          cart = raw ? JSON.parse(raw) : [];
+        }catch(e){
+          cart = [];
+        }
+      }
+      
+      function saveCart(){
+        localStorage.setItem('AQUAWAVE_cart', JSON.stringify(cart));
+        window.dispatchEvent(new Event('storage'));
+        updateTotals();
+      }
+
+      function clearCart(){
+        localStorage.removeItem('AQUAWAVE_cart');
+        localStorage.removeItem('AQUAWAVE_promo');
+        initFromStorage();
+        updateTotals();
+      }
+
+      function applyPromo(){
+        const code = (promoInput.value || '').trim().toUpperCase();
+        if(code === PROMO_CODE){
+          promo.code = PROMO_CODE;
+          promo.percent = PROMO_DISCOUNT;
+          promoFeedback.innerText = `Success! 7% discount applied.`;
+          promoFeedback.style.color = 'var(--success)';
+        } else {
+          promo.code = '';
+          promo.percent = 0;
+          promoFeedback.innerText = `Invalid code.`;
+          promoFeedback.style.color = 'var(--danger)';
+        }
+        localStorage.setItem('AQUAWAVE_promo', JSON.stringify(promo));
+        updateTotals();
+      }
+
+      function validateForm(){
+        let valid = true;
+
+        // Reset errors
+        [contactName, contactEmail, contactPhone, shipAddress].forEach(el => el.classList.remove('error-border'));
+        [reqName, reqEmail, reqPhone, reqAddress].forEach(el => el.style.display = 'none');
+
+        if(!contactName.value.trim()){
+          contactName.classList.add('error-border');
+          reqName.style.display = 'block';
+          valid = false;
+        }
+        if(!contactEmail.value.trim() || !/^\S+@\S+\.\S+$/.test(contactEmail.value)){
+          contactEmail.classList.add('error-border');
+          reqEmail.style.display = 'block';
+          valid = false;
+        }
+        if(!contactPhone.value.trim()){
+          contactPhone.classList.add('error-border');
+          reqPhone.style.display = 'block';
+          valid = false;
+        }
+        if(shippingRequested && !shipAddress.value.trim()){
+          shipAddress.classList.add('error-border');
+          reqAddress.style.display = 'block';
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      function updateItemQty(id, change){
+        const item = cart.find(x => String(x.id) === String(id));
+        if(item) item.qty = Math.max(1, (Number(item.qty) || 1) + change);
+        saveCart();
+      }
+
+      function removeItem(id){
+        cart = cart.filter(x => String(x.id) !== String(id));
+        saveCart();
+      }
+
+      function renderCart(){
+        if(cartCountEl) cartCountEl.innerText = String(computeCountFromStorage());
+        if(!cart.length){
+          cartArea.innerHTML = '<div class="empty">Your cart is empty. <a href="shop.html">Start shopping now!</a></div>';
+          subtotalEl.innerText = format(0);
+          shippingAmountEl.innerText = format(0);
+          promoAmountEl.innerText = format(0);
+          grandTotalEl.innerText = format(0);
+          return;
+        }
+
+        cartArea.innerHTML = '';
+        cart.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <div class="thumb"><img src="${escapeHtml(item.image || 'https://placehold.co/800x500?text=No+Image')}" alt="${escapeHtml(item.title || 'Product')}"></div>
+            <div class="item-main">
+              <div class="item-title">${escapeHtml(item.title || 'Unnamed Product')}</div>
+              <div class="item-specs">${escapeHtml(item.horsepower ? item.horsepower + ' HP' : '')}${item.shaftLengthInch ? ' • ' + escapeHtml(String(item.shaftLengthInch)) + '"' : ''}${item.starterType ? ' • ' + escapeHtml(item.starterType) : ''}</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto">
+                <div class="qty-controls">
+                  <button class="qty-decr" data-id="${escapeHtml(item.id)}">−</button>
+                  <input class="qty-input" data-id="${escapeHtml(item.id)}" type="number" min="1" value="${escapeHtml(String(item.qty||1))}" />
+                  <button class="qty-incr" data-id="${escapeHtml(item.id)}">+</button>
+                  <div class="small-muted" style="margin-left:12px">Subtotal: <strong>${format((item.price||0)*(item.qty||1))}</strong></div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:end;gap:8px">
+                  <div class="price">${format(item.price||0)}</div>
+                  <button class="remove-btn" data-id="${escapeHtml(item.id)}">Remove</button>
+                </div>
+              </div>
+            </div>
+          `;
+          cartArea.appendChild(div);
+        });
+
+        // Event listeners
+        cartArea.querySelectorAll('.qty-incr').forEach(btn => btn.addEventListener('click', () => updateItemQty(btn.dataset.id, 1)));
+        cartArea.querySelectorAll('.qty-decr').forEach(btn => btn.addEventListener('click', () => updateItemQty(btn.dataset.id, -1)));
+        cartArea.querySelectorAll('.remove-btn').forEach(btn => btn.addEventListener('click', () => removeItem(btn.dataset.id)));
+        cartArea.querySelectorAll('.qty-input').forEach(input => input.addEventListener('change', e => {
+          const qty = Math.max(1, Number(e.target.value));
+          const item = cart.find(x => String(x.id) === String(e.target.dataset.id));
+          if(item) item.qty = qty;
+          saveCart();
+        }));
+      }
+
+      function updateTotals(){
+        const subtotal = computeSubtotal();
+        const promoAmt = promo.percent ? Math.round(subtotal * promo.percent) : 0;
+        const shippingAmt = (subtotal > SHIPPING_FREE_THRESHOLD) ? 0 : (shippingRequested ? SHIPPING_FLAT : 0);
+        const grand = Math.max(0, subtotal - promoAmt + shippingAmt);
+
+        promoAmountEl.innerText = promo.percent ? `- ${format(promoAmt)}` : '—';
+        promoAmountEl.style.color = promo.percent ? 'var(--success)' : 'var(--muted)';
+        shippingAmountEl.innerText = shippingAmt > 0 ? format(shippingAmt) : (shippingRequested ? 'Free' : 'N/A');
+        subtotalEl.innerText = format(subtotal);
+        grandTotalEl.innerText = format(grand);
+      }
+
+      async function proceedToCheckout(){
+        if(!cart.length){
+          alert('Your cart is empty.');
+          return;
+        }
+
+        if(!validateForm()){
+          alert('Please fill in all required fields.');
+          return;
+        }
+
+        shippingRequested = requireShippingChk.checked;
+        updateTotals();
+
+        const order = { 
+          id: 'ORD-' + Date.now(), 
+          items: cart,
+          subtotal: computeSubtotal(),
+          promoCode: promo.code || '',
+          promoAmount: promo.percent ? Math.round(computeSubtotal() * promo.percent) : 0,
+          shippingRequested,
+          shippingAmount: (computeSubtotal() > SHIPPING_FREE_THRESHOLD) ? 0 : (shippingRequested ? SHIPPING_FLAT : 0),
+          total: Number(grandTotalEl.textContent.replace(/[^0-9.-]+/g,"")),
+          contact: {
+            name: contactName.value.trim(),
+            email: contactEmail.value.trim(),
+            phone: contactPhone.value.trim()
+          },
+          shippingAddress: shippingRequested ? shipAddress.value.trim() : null
+        };
+
+        localStorage.setItem('AQUAWAVE_last_order', JSON.stringify(order));
+        window.location.href = 'checkout.html';
+      }
+
+      function initFromStorage(){
+        updateCartFromStorage();
+        try{ shippingRequested = localStorage.getItem('AQUAWAVE_shipping') === 'true'; }catch(e){}
+        requireShippingChk.checked = shippingRequested;
+        shippingFormWrap.style.display = shippingRequested ? '' : 'none';
+
+        try{
+          const savedPromo = localStorage.getItem('AQUAWAVE_promo');
+          if(savedPromo) promo = JSON.parse(savedPromo);
+          if(promo.code === PROMO_CODE){
+            promoInput.value = PROMO_CODE;
+            promoFeedback.innerText = `Success! 7% discount applied.`;
+            promoFeedback.style.color = 'var(--success)';
+          }
+        }catch(e){}
+
+        renderCart();
+        updateTotals();
+      }
+
+      // Event Listeners
+      applyPromoBtn.addEventListener('click', applyPromo);
+      promoInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); applyPromo(); }});
+      
+      requireShippingChk.addEventListener('change', e=>{ 
+        shippingRequested = e.target.checked; 
+        shippingFormWrap.style.display = shippingRequested ? '' : 'none'; 
+        try{ localStorage.setItem('AQUAWAVE_shipping', String(shippingRequested)); }catch(e){}
+        updateTotals();
+      });
+      
+      clearCartBtn.addEventListener('click', ()=>{ if(confirm('Clear your cart?')) clearCart(); });
+      proceedBtn.addEventListener('click', proceedToCheckout);
+
+      window.addEventListener('storage', e=>{
+        if(e.key === 'AQUAWAVE_cart' || e.key === 'AQUAWAVE_promo' || e.key === 'AQUAWAVE_shipping') initFromStorage();
+      });
+
+      initFromStorage();
+
+      if(!window.AQUAWAVECart){
+        window.AQUAWAVECart = {
+          add(item){
+            try{
+              const raw = localStorage.getItem('AQUAWAVE_cart');
+              const arr = raw ? JSON.parse(raw) : [];
+              if(!item || !item.id) return;
+              const found = arr.find(x=> String(x.id) === String(item.id));
+              if(found){
+                found.qty = (Number(found.qty) || 0) + (Number(item.qty) || 1);
+              } else {
+                arr.push({ id: item.id, title: item.title || item.id, price: item.price || 0, qty: Number(item.qty) || 1, image: item.image || '' });
+              }
+              localStorage.setItem('AQUAWAVE_cart', JSON.stringify(arr));
+              initFromStorage();
+            }catch(e){ console.warn('AQUAWAVECart.add error', e); }
+          },
+          clear(){ clearCart(); }
+        };
+      }
+    })();
+  </script>
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/694bd0836edca7197f963255/1jd82d0ui';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

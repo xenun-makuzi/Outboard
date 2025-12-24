@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xenun Motors — Shop Outboard Motors</title>
+  <meta name="description" content="Shop Honda, Mercury, Yamaha, Suzuki and Tohatsu outboard motors. Filter by horsepower, shaft length, starter, trim type and price.">
+  <link rel="canonical" href="https://www.xenunmotors.example/shop.html" />
+  <style>
+    :root{
+      --max:1200px; --accent:#ec407a; --card:#fff; --bg:#f7f8fa; --muted:#6b6b6b;
+      --success:#27a844; --danger:#d32f2f; --shadow: 0 8px 24px rgba(18,24,32,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;overflow-x:hidden}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#111}
+    a{color:inherit;text-decoration:none}
+
+    /* ---------- HERO (inserted after navbar) ---------- */
+    .hero {
+      background-image: url(bg2.jpg);
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 80px 20px;
+      margin-bottom: 16px;
+    }
+    .hero .hero-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .hero h1 {
+      font-size: 2.4rem;
+      background: rgba(121, 120, 120, 0.38);
+      margin: 0 0 8px 0;
+      letter-spacing: 1px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      max-width: 900px;
+      margin: 10px auto 0 auto;
+      line-height: 1.6;
+      background: rgba(0,0,0,0.38);
+      padding: 12px 16px;
+      border-radius: 6px;
+      display: inline-block;
+      color: rgba(10, 10, 10, 0.815)000;
+    }
+    @media(min-width:980px){
+      .hero{ padding: 100px 20px; }
+      .hero h1{ font-size: 3.2rem; }
+      .hero p{ font-size: 1.25rem; }
+    }
+
+    /* header */
+    header.site-header{position:sticky;top:0;z-index:60;background:var(--card);border-bottom:1px solid #eee}
+    .nav-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;padding:12px 18px;gap:12px;flex-wrap:wrap}
+    .logo-placeholder{width:140px;height:44px;border-radius:8px;background:linear-gradient(90deg,#f1f1f1,#fafafa);display:flex;align-items:center;justify-content:center;color:#999;font-weight:700}
+    nav.main-nav{display:flex;gap:10px;align-items:center}
+    .spacer{flex:1}
+    .search-inline{flex-basis:360px}
+    .search-inline input{width:100%;padding:8px 10px;border-radius:10px;border:1px solid #eee;background:#fafafa}
+
+    /* icons */
+    .icons{display:flex;gap:10px;align-items:center}
+    .icon-btn{display:inline-flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;border:1px solid #eee;cursor:pointer;text-decoration:none;color:inherit}
+    .hamburger{display:none;background:#fff;border:1px solid #eee;padding:8px;border-radius:8px;cursor:pointer}
+    @media(max-width:880px){nav.main-nav{display:none}.search-inline{display:none}.hamburger{display:block}}
+
+    /* container */
+    .container{max-width:var(--max);margin:18px auto;padding:0 16px}
+
+    /* Brands strip */
+    .brand-strip{display:flex;gap:12px;overflow:auto;padding:8px 6px;margin-bottom:12px}
+    .brand-card{flex:0 0 auto;background:var(--card);padding:8px 12px;border-radius:10px;border:1px solid #eee;display:flex;flex-direction:column;align-items:center;min-width:120px;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s, box-shadow .12s}
+    .brand-card:hover{transform:translateY(-4px)}
+    .brand-card.active{background:linear-gradient(90deg,#fff0f6,#fff7ed);border-color:rgba(236,64,122,0.18);color:var(--accent);box-shadow:0 12px 30px rgba(236,64,122,0.06)}
+    .brand-card .count{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* quick filters (chips) */
+    .quick-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .chip{padding:8px 10px;border-radius:999px;background:#fff;border:1px solid #eee;font-weight:600;cursor:pointer;box-shadow:0 6px 18px rgba(12,18,24,0.03)}
+    .chip.active{background:linear-gradient(90deg,#fff0f6,#fff7ed);border-color:rgba(236,64,122,0.18);color:var(--accent)}
+
+    /* filters area */
+    .filters-panel{display:flex;flex-direction:column;gap:10px;background:var(--card);padding:12px;border-radius:12px;border:1px solid #eee;box-shadow:var(--shadow);margin-bottom:12px}
+    .filters-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .filters-row label{font-size:14px;color:#333;display:flex;align-items:center;gap:8px}
+    .filters-row select, .filters-row input{padding:8px;border-radius:8px;border:1px solid #eee;background:#fafafa}
+    .filters-actions{display:flex;gap:8px;margin-left:auto}
+    .btn{padding:8px 12px;border-radius:8px;border:1px solid #eee;background:#fff;font-weight:700}
+    .btn.primary{background:var(--accent);color:#fff;border:none}
+    .btn.ghost{background:transparent;border:1px solid #eee}
+    .btn.added { background: #e9e9e9; color: #333; border-color: #ddd; transform: translateY(-1px); }
+
+    /* main layout */
+    .layout{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:980px){ .layout{grid-template-columns:280px 1fr} }
+
+    /* left column (desktop) */
+    .left-col{display:none}
+    @media(min-width:980px){ .left-col{display:block} }
+    .left-card{background:var(--card);padding:12px;border-radius:12px;border:1px solid #eee;box-shadow:var(--shadow);margin-bottom:12px}
+    .left-card h4{margin:0 0 8px 0}
+
+    /* welcome text */
+    .welcome{background:linear-gradient(180deg,#fff,#fff);padding:14px;border-radius:12px;border:1px solid #eee;margin-bottom:12px}
+    .welcome h2{margin:0 0 6px 0;font-size:20px}
+    .welcome p{margin:0;color:var(--muted)}
+
+    /* product grid */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:640px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card);border-radius:12px;border:1px solid #eee;overflow:hidden;box-shadow:0 8px 20px rgba(12,18,24,0.04);display:flex;flex-direction:column;min-height:220px;transition:transform .18s}
+    .card:hover{transform:translateY(-6px)}
+    /* UPDATED: larger media area + show full image */
+    .card .media{
+      height:260px;           /* taller so images are more visible */
+      overflow:hidden;
+      background:#f3f3f3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .card .media img{
+      width:100%;
+      height:100%;
+      object-fit:contain;      /* <- show whole image (no cropping) */
+      display:block;
+      background: transparent;
+    }
+    .card .body{padding:10px 12px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .card h3{margin:0;font-size:15px;cursor:pointer}
+    .card .specs{color:var(--muted);font-size:13px}
+    .price{font-weight:900;color:var(--accent);font-size:16px}
+    .card .actions{display:flex;gap:8px;margin-top:auto;align-items:center}
+
+    /* pagination */
+    .pager{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px}
+    .pager .page-info{color:var(--muted);font-size:14px}
+
+    /* empty / no results */
+    .no-results{padding:28px;text-align:center;color:var(--muted);background:linear-gradient(180deg,#fff,#fff);border-radius:10px;border:1px dashed #eee}
+
+    /* similar/footer */
+    footer.site-footer{margin-top:28px;padding:24px;background:#fff;border-top:1px solid #eee;color:var(--muted);text-align:center}
+
+    /* small devices: collapsible filters */
+    .mobile-filter-toggle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+    .mobile-filter-toggle button{padding:8px 10px;border-radius:8px;border:1px solid #eee;background:#fff;font-weight:700}
+    .filters-collapsed{display:none}
+    @media(min-width:980px){ .filters-collapsed{display:block} .mobile-filter-toggle{display:none} }
+
+    /* shaft label small style */
+    .shaft-label{font-weight:600;color:#444}
+
+    /* prevent horizontal overflow for brand-strip */
+    .brand-strip::-webkit-scrollbar{height:8px}
+    .brand-strip::-webkit-scrollbar-thumb{background:#eee;border-radius:6px}
+
+    /* mobile menu */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 84%;
+      max-width: 360px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 6px 0 30px rgba(0,0,0,0.12);
+      z-index: 20000;
+      transition: left 240ms ease;
+      padding: 20px;
+      overflow:auto;
+    }
+    .mobile-menu.open { left: 0; }
+    .mobile-menu .close-mobile {
+      display:inline-block;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #eee;
+      background:#fff;
+      cursor:pointer;
+    }
+    .mobile-menu nav a { display:block; padding:10px 0; color:#111; text-decoration:none; font-weight:600; }
+
+  </style>
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <div class="nav-inner">
+      <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+
+      <a class="brand" href="./" aria-label="Xenun Motors home"><div class="logo-placeholder">LOGO</div></a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="./">Home</a>
+        <a href="./shop.html" aria-current="page">Shop</a>
+        <a href="./reviews.html">Reviews</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+      </nav>
+
+      <div class="spacer" aria-hidden="true"></div>
+
+      <div class="search-inline" role="search">
+        <form action="search.html" method="GET">
+          <input name="q" type="search" placeholder="Search model, brand or horsepower" aria-label="Search models and brands" />
+        </form>
+      </div>
+
+      <div class="icons">
+        <a id="cart-btn" class="icon-btn" href="cart.html" aria-label="Cart">🛒 <span id="cart-count">0</span></a>
+
+        <a id="account-btn" class="icon-btn" href="login.html" aria-label="Account">👤</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <strong>Xenun Motors</strong>
+      <button id="closeMobile" class="close-mobile" aria-label="Close mobile menu">✕</button>
+    </div>
+    <nav>
+      <a href="./">Home</a>
+      <a href="./shop.html">Shop</a>
+      <a href="./reviews.html">Reviews</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="finance.html">Request Finance</a>
+    </nav>
+  </div>
+
+  <section class="hero" role="region" aria-label="Shop hero">
+    <div class="hero-inner">
+      <h1>Welcome to OceanDrive Motors</h1>
+      <p>
+        Your trusted source for high-performance boat motors.  
+        We offer reliable, durable, and fuel-efficient outboard motors  
+        designed to take you further on the water.
+      </p>
+    </div>
+  </section>
+
+  <main class="container" id="main">
+    <div class="brand-strip" id="brand-strip" aria-label="Brands">
+      </div>
+
+    <div class="quick-filters" id="quick-filters" aria-label="Quick filters">
+      <div class="chip" data-qtype="hp" data-qvalue="2">2 HP</div>
+      <div class="chip" data-qtype="hp" data-qvalue="5-10">5–10 HP</div>
+      <div class="chip" data-qtype="hp" data-qvalue="15">15 HP</div>
+      <div class="chip" data-qtype="hp" data-qvalue="20">20 HP</div>
+      <div class="chip" data-qtype="shaft" data-qvalue="15">15" Short</div>
+      <div class="chip" data-qtype="shaft" data-qvalue="20">20" Medium</div>
+      <div class="chip" data-qtype="shaft" data-qvalue="25">25" Long</div>
+      <div class="chip" data-qtype="starter" data-qvalue="Electric">Electric start</div>
+      <div class="chip" data-qtype="trim" data-qvalue="Power tilt">Power tilt</div>
+    </div>
+
+    <div class="mobile-filter-toggle" id="mobile-filter-toggle">
+      <div style="font-weight:700">Filters</div>
+      <div>
+        <button id="toggle-filters-btn" aria-expanded="false">Show filters</button>
+      </div>
+    </div>
+
+    <div class="filters-collapsed" id="filters-panel">
+      <div class="filters-panel">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div style="min-width:160px">
+            <label for="filter-company">Company</label><br>
+            <select id="filter-company"><option value="">All companies</option></select>
+          </div>
+
+          <div style="min-width:120px">
+            <label for="filter-hp">Horsepower</label><br>
+            <select id="filter-hp"><option value="">Any HP</option></select>
+          </div>
+
+          <div style="min-width:140px">
+            <label for="filter-shaft">Shaft length</label><br>
+            <select id="filter-shaft"><option value="">Any shaft</option></select>
+          </div>
+
+          <div style="min-width:120px">
+            <label for="filter-starter">Starter</label><br>
+            <select id="filter-starter"><option value="">Any</option><option>Electric</option><option>Manual</option></select>
+          </div>
+
+          <div style="min-width:140px">
+            <label for="filter-trim">Trim</label><br>
+            <select id="filter-trim"><option value="">Any</option><option>Manual</option><option>Power tilt</option><option>Gas assisted</option></select>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="min-width:100px">
+              <label for="price-min">Min</label><br>
+              <input id="price-min" type="number" placeholder="0">
+            </div>
+            <div style="min-width:100px">
+              <label for="price-max">Max</label><br>
+              <input id="price-max" type="number" placeholder="99999">
+            </div>
+          </div>
+
+          <div class="filters-actions" role="toolbar">
+            <button class="btn" id="clear-filters">Clear</button>
+            <button class="btn primary" id="apply-filters">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout" id="layout">
+      <aside class="left-col" id="left-col" aria-label="Filters and info">
+        <div class="left-card">
+          <h4>Filter by company</h4>
+          <div id="left-company-list"></div>
+        </div>
+
+        <div class="left-card">
+          <h4>Top categories</h4>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="chip" data-qtype="hp" data-qvalue="2">2 HP</button>
+            <button class="chip" data-qtype="hp" data-qvalue="15">15 HP</button>
+            <button class="chip" data-qtype="hp" data-qvalue="20">20 HP</button>
+            <button class="chip" data-qtype="shaft" data-qvalue="15">15" Short</button>
+          </div>
+        </div>
+
+        <div class="left-card">
+          <h4>Finance</h4>
+          <p class="muted">Request finance on any product — secure application.</p>
+          <a class="btn primary" href="finance.html">Request Finance</a>
+        </div>
+      </aside>
+
+      <section id="result-area">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div id="results-info">Showing results</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label class="muted" for="per-page" style="font-size:13px;margin-right:6px">Per page</label>
+            <select id="per-page" style="padding:8px;border-radius:8px;border:1px solid #eee">
+              <option value="15">15</option>
+              <option value="30">30</option>
+              <option value="60">60</option>
+            </select>
+            <label class="muted" for="sort" style="font-size:13px;margin-left:8px;margin-right:6px">Sort</label>
+            <select id="sort">
+              <option value="relevance">Relevance</option>
+              <option value="price-asc">Price low → high</option>
+              <option value="price-desc">Price high → low</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="results-grid" class="grid" aria-live="polite"></div>
+        <div id="no-results" class="no-results" style="display:none">No products found — try clearing filters.</div>
+
+        <div class="pager" id="pager" style="display:none">
+          <button class="btn" id="prev-page">&lt; Prev</button>
+          <div class="page-info" id="page-info">1 / 1</div>
+          <button class="btn" id="next-page">Next &gt;</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">© 2025 Xenun Motors · Terms · Privacy</footer>
+
+  <template id="card-template">
+    <article class="card" role="article">
+      <div class="media"><img src="" alt=""></div>
+      <div class="body">
+        <h3></h3>
+        <div class="specs"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div class="price"></div>
+          <div class="actions">
+            <button class="btn ghost add-cart">Add</button>
+            <button class="btn primary finance">Request Finance</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+  (function(){
+    const JSON_FILES = ['boat_motors.json','products.json'];
+    let PRODUCTS = [];
+
+    // DOM
+    const brandStrip = document.getElementById('brand-strip');
+    const filterCompany = document.getElementById('filter-company');
+    const filterHp = document.getElementById('filter-hp');
+    const filterShaft = document.getElementById('filter-shaft');
+    const filterStarter = document.getElementById('filter-starter');
+    const filterTrim = document.getElementById('filter-trim');
+    const priceMin = document.getElementById('price-min');
+    const priceMax = document.getElementById('price-max');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    const resultsGrid = document.getElementById('results-grid');
+    const resultsInfo = document.getElementById('results-info');
+    const noResults = document.getElementById('no-results');
+    const sortSelect = document.getElementById('sort');
+    const leftCompanyList = document.getElementById('left-company-list');
+    const quickFilters = document.getElementById('quick-filters');
+    const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+    const filtersPanel = document.getElementById('filters-panel');
+
+    const pager = document.getElementById('pager');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+    const pageInfo = document.getElementById('page-info');
+    const perPageSelect = document.getElementById('per-page');
+
+    // state
+    let currentPage = 1;
+    let itemsPerPage = Number(perPageSelect.value) || 15;
+    let lastRenderedList = [];
+
+    // utils
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    function currency(n){ return '$' + Number(n).toLocaleString(); }
+    function normalize(s){ return String(s||'').toLowerCase().trim(); }
+    function uniqueSorted(arr){
+      return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>{
+        const an = parseFloat(a), bn = parseFloat(b);
+        if(!isNaN(an) && !isNaN(bn)) return an - bn;
+        return String(a).localeCompare(String(b));
+      });
+    }
+
+    // consistent shaft label
+    function shaftLabel(raw){
+      if(raw === null || raw === undefined) return '';
+      const s = String(raw).trim().replace(/"/g,'');
+      const n = parseFloat(s);
+      if(!isNaN(n)){
+        if(Math.abs(n - 15) < 0.1) return `15" (Short)`;
+        if(Math.abs(n - 20) < 0.1) return `20" (Medium)`;
+        if(Math.abs(n - 25) < 0.1) return `25" (Long)`;
+        return `${n}"`;
+      }
+      return s.endsWith('"') ? s : `${s}"`;
+    }
+
+    // load product JSON (tries both filenames)
+    async function loadProductJson(){
+      for(const path of JSON_FILES){
+        try{
+          const resp = await fetch(path, {cache:'no-cache'});
+          if(!resp.ok) continue;
+          const json = await resp.json();
+          if(Array.isArray(json) && json.length) return json;
+        }catch(e){
+          console.error(`Error fetching ${path}:`, e);
+        }
+      }
+      return [];
+    }
+
+    // build UI controls (companies/hp/shaft)
+    function buildControls(){
+      const companies = uniqueSorted(PRODUCTS.map(p=>p.company));
+      filterCompany.innerHTML = '<option value="">All companies</option>';
+      companies.forEach(c=> filterCompany.appendChild(Object.assign(document.createElement('option'), { value:c, innerText:c })));
+
+      // left column company list
+      leftCompanyList.innerHTML = '';
+      companies.forEach(c=>{
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.style.marginBottom = '6px';
+        btn.innerText = c;
+        btn.addEventListener('click', ()=> {
+          filterCompany.value = c;
+          highlightBrandCard(c);
+          applyFilters(); // Important: call applyFilters here
+          window.scrollTo({top:200, behavior:'smooth'});
+        });
+        leftCompanyList.appendChild(btn);
+      });
+
+      // horsepower options (unique)
+      const hpSet = uniqueSorted(PRODUCTS.map(p=>String(p.horsepower)));
+      filterHp.innerHTML = '<option value="">Any HP</option>';
+      hpSet.forEach(h => filterHp.appendChild(Object.assign(document.createElement('option'), { value:h, innerText: h + ' HP' })));
+
+      // shaft options (unique) but show consistent labels
+      const shaftsRaw = uniqueSorted(PRODUCTS.map(p=> p.shaftLengthInch || p.shaft_length || '').filter(Boolean));
+      filterShaft.innerHTML = '<option value="">Any shaft</option>';
+      shaftsRaw.forEach(s=>{
+        const val = String(s).replace(/"/g,'');
+        const disp = shaftLabel(s);
+        filterShaft.appendChild(Object.assign(document.createElement('option'), { value:val, innerText: disp }));
+      });
+
+      // brand strip: include "All" card first
+      brandStrip.innerHTML = '';
+      const allCard = document.createElement('div');
+      allCard.className = 'brand-card';
+      allCard.dataset.company = '';
+      allCard.innerHTML = `<div style="font-weight:700">All</div><div class="count">${PRODUCTS.length} models</div>`;
+      allCard.addEventListener('click', ()=> {
+        filterCompany.value = '';
+        highlightBrandCard('');
+        applyFilters(); // Important: call applyFilters here
+        scrollToCatalog();
+      });
+      brandStrip.appendChild(allCard);
+
+      companies.forEach(c=>{
+        const count = PRODUCTS.filter(p=>p.company===c).length;
+        const div = document.createElement('div');
+        div.className = 'brand-card';
+        div.dataset.company = c;
+        div.innerHTML = `<div style="font-weight:700">${escapeHtml(c)}</div><div class="count">${count} models</div>`;
+        div.addEventListener('click', ()=>{ filterCompany.value = c; highlightBrandCard(c); applyFilters(); scrollToCatalog(); }); // Important: call applyFilters here
+        brandStrip.appendChild(div);
+      });
+    }
+
+    // set active brand card by company name; if '' marks "All"
+    function highlightBrandCard(company){
+      Array.from(brandStrip.children).forEach(card=>{
+        const c = card.dataset.company || '';
+        if((company || '') === (c || '')) card.classList.add('active');
+        else card.classList.remove('active');
+      });
+      // also toggle left company chips
+      Array.from(leftCompanyList.children).forEach(btn=>{
+        const isActive = (btn.innerText.split('(')[0].trim() === company) || (btn.innerText === company);
+        btn.classList.toggle('active', isActive);
+      });
+    }
+
+    // render product card
+    function renderCard(product){
+      const t = document.getElementById('card-template');
+      const el = t.content.firstElementChild.cloneNode(true);
+      const img = el.querySelector('.media img');
+      img.src = product.image || 'https://placehold.co/800x500?text=No+Image';
+      img.alt = escapeHtml((product.company||'') + ' ' + (product.model||''));
+      el.querySelector('h3').innerText = (product.company ? product.company + ' ' : '') + (product.model || '');
+      el.querySelector('.specs').innerText = `${product.horsepower?product.horsepower + ' HP':''}${product.shaftLengthInch ? ' • ' + shaftLabel(product.shaftLengthInch) : ''}${product.starterType ? ' • ' + product.starterType : ''}`;
+      el.querySelector('.price').innerText = currency(product.price || 0);
+
+      // UPDATED add-to-cart handler: keep your XenunCart behavior but show "Added" briefly for UX
+      el.querySelector('.add-cart').addEventListener('click', ()=> {
+        const btn = el.querySelector('.add-cart');
+        const payload = {
+          id: product.id,
+          title: (product.company||'') + ' ' + (product.model||''),
+          price: product.price || 0,
+          qty: 1,
+          image: product.image || product.thumbnail || '',
+          company: product.company || '',
+          model: product.model || '',
+          horsepower: product.horsepower || '',
+          shaftLengthInch: product.shaftLengthInch || '',
+          starterType: product.starterType || ''
+        };
+        // Use XenunCart if it exists, otherwise use the AQUAWAVE fallback
+        // NOTE: The cart script below defines AQUAWAVECart, so this should use that name.
+        if(window.AQUAWAVECart && typeof window.AQUAWAVECart.add === 'function'){
+          window.AQUAWAVECart.add(payload);
+        } else {
+          try{
+            const raw = localStorage.getItem('AQUAWAVE_cart'); // Use correct cart key
+            const arr = raw ? JSON.parse(raw) : [];
+            const found = arr.find(x=> String(x.id) === String(payload.id));
+            if(found) found.qty = (Number(found.qty)||0) + 1;
+            else arr.push(payload);
+            localStorage.setItem('AQUAWAVE_cart', JSON.stringify(arr));
+            try{ window.dispatchEvent(new Event('storage')); }catch(e){}
+            if(typeof window.setCartCount === 'function') window.setCartCount(arr.reduce((s,i)=> s + (Number(i.qty)||1),0));
+          }catch(e){ console.warn('add-cart fallback failed', e); }
+        }
+
+        // UI feedback: change button text to "Added" briefly
+        const originalText = btn.innerText;
+        btn.innerText = 'Added';
+        btn.classList.add('added');
+        btn.style.opacity = '0.95';
+        btn.style.pointerEvents = 'none';
+        setTimeout(()=> {
+          btn.innerText = originalText;
+          btn.classList.remove('added');
+          btn.style.opacity = '';
+          btn.style.pointerEvents = '';
+        }, 2000);
+      });
+
+      el.querySelector('.finance').addEventListener('click', ()=> location.href = 'finance.html?id=' + encodeURIComponent(product.id));
+      el.querySelector('.media').addEventListener('click', ()=> location.href = 'search.html?id=' + encodeURIComponent(product.id));
+      el.querySelector('h3').addEventListener('click', ()=> location.href = 'search.html?id=' + encodeURIComponent(product.id));
+      return el;
+    }
+
+    // search / filter / sort logic
+    function searchProducts(q){
+      q = normalize(q || '');
+      if(!q) return PRODUCTS.slice();
+      const qnum = parseFloat(q.replace(/[^\d.]/g,'')) || null;
+      const res = PRODUCTS.map(p=>{
+        let score = 0;
+        const model = normalize(p.model||'');
+        const company = normalize(p.company||'');
+        if(model.includes(q)) score += 60;
+        if(company.includes(q)) score += 40;
+        if(String(p.horsepower || '').includes(q)) score += 50;
+        if(qnum !== null && Number(p.horsepower) === qnum) score += 80;
+        return {p,score};
+      }).filter(r=>r.score>0).sort((a,b)=>b.score - a.score).map(r=>r.p);
+      return res;
+    }
+
+    function applyUiFilters(list){
+      const companyVal = filterCompany.value;
+      const hpVal = filterHp.value;
+      const shaftVal = filterShaft.value;
+      const starterVal = filterStarter.value;
+      const trimVal = filterTrim.value;
+      const minP = priceMin.value ? Number(priceMin.value) : null;
+      const maxP = priceMax.value ? Number(priceMax.value) : null;
+
+      return list.filter(p=>{
+        if(companyVal && p.company !== companyVal) return false;
+        if(hpVal && String(p.horsepower) !== hpVal) return false;
+        if(shaftVal){
+          const sh = String(p.shaftLengthInch || p.shaft_length || '').replace(/"/g,'');
+          if(sh !== String(shaftVal)) return false;
+        }
+        if(starterVal && p.starterType !== starterVal) return false;
+        if(trimVal && p.trimType !== trimVal) return false;
+        if(minP !== null && Number(p.price||0) < minP) return false;
+        if(maxP !== null && Number(p.price||0) > maxP) return false;
+        return true;
+      });
+    }
+
+    // pagination: render current page of list
+    function renderResults(list, q){
+      lastRenderedList = list || [];
+      currentPage = 1; // reset when rendering new result set
+      renderPage(q);
+      // update results info
+      resultsInfo.innerText = `${list.length} result${list.length>1?'s':''} ${q? 'for "'+q+'"':''}`;
+    }
+
+    function renderPage(q=''){
+      const list = lastRenderedList || [];
+      itemsPerPage = Number(perPageSelect.value) || itemsPerPage;
+      const total = list.length;
+      const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+      if(currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = list.slice(start, end);
+
+      resultsGrid.innerHTML = '';
+      if(!pageItems.length){
+        noResults.style.display = '';
+        pager.style.display = 'none';
+        resultsInfo.innerText = `No results ${q? 'for "'+q+'"':''}`;
+      } else {
+        noResults.style.display = 'none';
+        pageItems.forEach(p=> resultsGrid.appendChild(renderCard(p)));
+        // pager
+        if(totalPages > 1){
+          pager.style.display = '';
+          pageInfo.innerText = `${currentPage} / ${totalPages}`;
+        } else {
+          pager.style.display = 'none';
+        }
+      }
+    }
+
+    // CORE FUNCTION: Applies all filters/sort and triggers the render.
+    function applyFilters(){
+      const qParam = new URLSearchParams(location.search).get('q') || '';
+      let list = qParam ? searchProducts(qParam) : PRODUCTS.slice();
+      list = applyUiFilters(list);
+
+      // sort
+      const mode = sortSelect.value;
+      if(mode === 'price-asc') list.sort((a,b)=>(a.price||0)-(b.price||0));
+      else if(mode === 'price-desc') list.sort((a,b)=>(b.price||0)-(a.price||0));
+
+      renderResults(list, qParam);
+    }
+
+    // quick filter click handling (chips)
+    quickFilters.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      const type = chip.dataset.qtype;
+      const val = chip.dataset.qvalue;
+      // toggle active visual
+      chip.classList.toggle('active');
+      // map to controls (single-select behaviour)
+      if(type === 'hp'){
+        filterHp.value = val.includes('-') ? '' : val;
+      } else if(type === 'shaft'){
+        filterShaft.value = val;
+      } else if(type === 'starter'){
+        filterStarter.value = val;
+      } else if(type === 'trim'){
+        filterTrim.value = val;
+      }
+      // ensure company highlight cleared (quick filters shouldn't set company)
+      filterCompany.value = '';
+      highlightBrandCard('');
+      applyFilters();
+    });
+
+    // brand-strip click handled in buildControls; sync UI when company select changes
+    filterCompany.addEventListener('change', ()=>{
+      const c = filterCompany.value || '';
+      highlightBrandCard(c);
+      applyFilters(); // FIX: Call applyFilters on company change
+    });
+    
+    // FIX: Wire up all other filter controls to trigger applyFilters immediately on change/input
+    [filterHp, filterShaft, filterStarter, filterTrim, priceMin, priceMax].forEach(el => {
+        el.addEventListener('change', applyFilters);
+        // Also listen for input on price fields for better UX
+        if (el.type === 'number') el.addEventListener('input', applyFilters);
+    });
+
+    // sort and controls wiring
+    sortSelect.addEventListener('change', applyFilters);
+    applyFiltersBtn.addEventListener('click', applyFilters);
+    clearFiltersBtn.addEventListener('click', ()=>{
+      filterCompany.value=''; filterHp.value=''; filterShaft.value=''; filterStarter.value=''; filterTrim.value=''; priceMin.value=''; priceMax.value='';
+      // clear active quick chips
+      Array.from(document.querySelectorAll('.quick-filters .chip')).forEach(c=>c.classList.remove('active'));
+      highlightBrandCard('');
+      applyFilters();
+    });
+
+    // pagination controls
+    prevPageBtn.addEventListener('click', ()=>{
+      if(currentPage > 1){ currentPage--; renderPage(); window.scrollTo({top:300, behavior:'smooth'}); }
+    });
+    nextPageBtn.addEventListener('click', ()=>{
+      const totalPages = Math.max(1, Math.ceil((lastRenderedList.length||0) / itemsPerPage));
+      if(currentPage < totalPages){ currentPage++; renderPage(); window.scrollTo({top:300, behavior:'smooth'}); }
+    });
+    perPageSelect.addEventListener('change', ()=>{
+      itemsPerPage = Number(perPageSelect.value) || itemsPerPage;
+      currentPage = 1;
+      renderPage();
+    });
+
+    // responsive filters toggle
+    toggleFiltersBtn.addEventListener('click', ()=>{
+      const expanded = toggleFiltersBtn.getAttribute('aria-expanded') === 'true';
+      toggleFiltersBtn.setAttribute('aria-expanded', String(!expanded));
+      toggleFiltersBtn.innerText = expanded ? 'Show filters' : 'Hide filters';
+      filtersPanel.style.display = expanded ? 'none' : '';
+    });
+    // init collapsed on mobile
+    if(window.innerWidth <= 980) { filtersPanel.style.display = 'none'; toggleFiltersBtn.setAttribute('aria-expanded','false'); }
+
+    function scrollToCatalog(){ window.scrollTo({top: document.getElementById('results-grid').offsetTop - 120, behavior:'smooth'}); }
+
+    // on load
+    (async function init(){
+      PRODUCTS = await loadProductJson();
+
+      // Normalize product objects
+      PRODUCTS = PRODUCTS.map((p, idx)=> {
+        p.id = p.id || p.sku || ('p-'+idx);
+        p.company = p.company || 'Unknown';
+        p.horsepower = p.horsepower || p.hp || '';
+        p.shaftLengthInch = p.shaftLengthInch || p.shaft_length || p.shaft || '';
+        p.starterType = p.starterType || p.starter || '';
+        p.trimType = p.trimType || p.trim || '';
+        p.price = p.price || p.cost || 0;
+        return p;
+      });
+      
+      if(PRODUCTS.length === 0) {
+        // Stop execution if no products are loaded
+        resultsInfo.innerText = 'Product Catalog is empty or failed to load.';
+        noResults.style.display = '';
+        return;
+      }
+
+      buildControls();
+
+      // Initial render - set UI state from URL params if present
+      const params = new URLSearchParams(location.search);
+      const companyParam = params.get('company') || '';
+      
+      if(companyParam){
+        filterCompany.value = companyParam;
+        highlightBrandCard(companyParam);
+      }
+      
+      // FIX: Always call the main applyFilters function to ensure the rendering pipeline runs,
+      // handles URL search params, applies default sorting, and renders the first page.
+      applyFilters();
+    })();
+
+  })();
+  </script>
+
+ <script>
+    // MOBILE MENU (hamburger)
+    (function(){
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const closeMobile = document.getElementById('closeMobile');
+
+      if(hamburger && mobileMenu){
+        hamburger.addEventListener('click', ()=> {
+          mobileMenu.classList.add('open');
+          mobileMenu.setAttribute('aria-hidden','false');
+        });
+      }
+      if(closeMobile && mobileMenu){
+        closeMobile.addEventListener('click', ()=> {
+          mobileMenu.classList.remove('open');
+          mobileMenu.setAttribute('aria-hidden','true');
+        });
+      }
+      if(mobileMenu){
+        mobileMenu.addEventListener('click', (e)=> {
+          if(e.target === mobileMenu){ mobileMenu.classList.remove('open'); mobileMenu.setAttribute('aria-hidden','true'); }
+        });
+      }
+    })();
+
+    // CART COUNTER: reads 'AQUAWAVE_cart' from localStorage and updates #cart-count
+    (function(){
+      const cartCountEl = document.getElementById('cart-count');
+
+      function computeCountFromStorage(){
+        try{
+          // CORRECTION: Changed 'xenun_cart' to 'AQUAWAVE_cart'
+          const raw = localStorage.getItem('AQUAWAVE_cart');
+          const arr = raw ? JSON.parse(raw) : [];
+          const count = Array.isArray(arr) ? arr.reduce((s,i)=> s + (Number(i.qty) || 1), 0) : 0;
+          return Number(count) || 0;
+        }catch(e){
+          return 0;
+        }
+      }
+
+      function refreshCartBadge(){
+        const n = computeCountFromStorage();
+        if(cartCountEl) cartCountEl.innerText = String(n);
+      }
+
+      // expose AQUAWAVECart.add fallback if not present
+      // CORRECTION: Changed 'XenunCart' to 'AQUAWAVECart'
+      if(!window.AQUAWAVECart){
+        window.AQUAWAVECart = {
+          add(item){
+            try{
+              // CORRECTION: Changed 'xenun_cart' to 'AQUAWAVE_cart'
+              const raw = localStorage.getItem('AQUAWAVE_cart');
+              const arr = raw ? JSON.parse(raw) : [];
+              if(!item || !item.id) return;
+              const found = arr.find(x=> String(x.id) === String(item.id));
+              if(found){
+                found.qty = (Number(found.qty) || 0) + (Number(item.qty) || 1);
+              } else {
+                arr.push({ id: item.id, title: item.title || item.id, price: item.price || 0, qty: Number(item.qty) || 1, image: item.image || '' });
+              }
+              // CORRECTION: Changed 'xenun_cart' to 'AQUAWAVE_cart'
+              localStorage.setItem('AQUAWAVE_cart', JSON.stringify(arr));
+              refreshCartBadge();
+            }catch(e){ console.warn('AQUAWAVECart.add error', e); }
+          },
+          clear(){
+            // CORRECTION: Changed 'xenun_cart' to 'AQUAWAVE_cart'
+            localStorage.removeItem('AQUAWAVE_cart');
+            refreshCartBadge();
+          }
+        };
+      }
+
+      // also provide setCartCount for older scripts
+      window.setCartCount = function(n){ try{ const el = document.getElementById('cart-count'); if(el) el.innerText = String(n); } catch(e){} };
+
+      // initial load
+      refreshCartBadge();
+
+      // sync across tabs
+      window.addEventListener('storage', (e)=> {
+        // CORRECTION: Changed 'xenun_cart' to 'AQUAWAVE_cart'
+        if(e.key === 'AQUAWAVE_cart') refreshCartBadge();
+      });
+      document.addEventListener('visibilitychange', ()=> { if(!document.hidden) refreshCartBadge(); });
+    })();
+  </script>
+</body>
+</html>
