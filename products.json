@@ -1071,7 +1071,7 @@
     "shaftType": "Long",
     "starterType": "Manual",
     "trimType": "Gas Assisted",
-    "price": 6079.45,
+    "price": 3500,
     "model": "MER200-77",
     "stock": 9,
     "image": "hp20mer.jpg",
@@ -1906,7 +1906,7 @@
   {
     "id": "motor-137",
     "company": "Suzuki",
-    "horsepower": 30,
+    "horsepower": 35,
     "shaftLengthInch": 15,
     "shaftType": "Short",
     "starterType": "Electric",
@@ -1915,7 +1915,7 @@
     "model": "SUZ350-137",
     "stock": 9,
     "image": "hp30suz.jpg",
-    "description": "30 HP 2-Stroke outboard motor with electric start and manual trim."
+    "description": "35 HP 2-Stroke outboard motor with electric start and manual trim."
   },
   {
     "id": "motor-138",
