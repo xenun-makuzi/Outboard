@@ -296,18 +296,13 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <script>
-  emailjs.init('PUBLIC_KEY_PLACEHOLDER'); // replace with your public key
+  emailjs.init('2F-A6ZBoeNAh8ncEy'); // Your public key
 
-  // generate PDF blob of the #financingForm element
-  async function generatePDFBlob(){
-    // Targets only the form content
+  // Preview PDF - Kept as requested so the user can still view it locally
+  document.getElementById('previewBtn').addEventListener('click', async function(){
     const element = document.getElementById('financingForm');
-
-    // *** CORRECTION 2a: Find and hide the submit row BEFORE conversion ***
     const submitRow = element.querySelector('.submit-row');
-    if (submitRow) {
-      submitRow.classList.add('hide-on-pdf');
-    }
+    if (submitRow) submitRow.classList.add('hide-on-pdf');
     
     const opt = {
       margin: 0.5, 
@@ -317,61 +312,51 @@
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
-    const pdfBlob = await html2pdf().from(element).set(opt).outputPdf('blob');
-
-    // *** CORRECTION 2b: Show the submit row again AFTER conversion ***
-    if (submitRow) {
-      submitRow.classList.remove('hide-on-pdf');
-    }
-
-    return pdfBlob;
-  }
-
-  // Preview PDF in new tab
-  document.getElementById('previewBtn').addEventListener('click', async function(){
-    const blob = await generatePDFBlob();
-    const url = URL.createObjectURL(blob);
-    window.open(url);
+    html2pdf().from(element).set(opt).outputPdf('blob').then((blob) => {
+      const url = URL.createObjectURL(blob);
+      window.open(url);
+      if (submitRow) submitRow.classList.remove('hide-on-pdf');
+    });
   });
 
-  // On submit: generate PDF, attach to hidden file input, then sendForm
-  document.getElementById('financingForm').addEventListener('submit', async function(e){
+ // Main Submit Logic
+  document.getElementById('financingForm').addEventListener('submit', function(e){
     e.preventDefault();
-    try{
-      // create PDF blob
-      const pdfBlob = await generatePDFBlob();
+    
+    const btn = document.querySelector('.btn:not(.ghost)');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
 
-      // put blob into hidden file input named attachments[0]
-      const dt = new DataTransfer();
-      const file = new File([pdfBlob], 'Financing_Application.pdf', {type:'application/pdf'});
-      dt.items.add(file);
-      const hiddenInput = document.getElementById('pdfAttachment');
-      hiddenInput.files = dt.files;
+    // Extracting only text/select data (Ignoring files to keep payload small)
+    const formData = new FormData(this);
+    const templateParams = {};
+    
+    formData.forEach((value, key) => {
+      if (!(value instanceof File)) {
+        templateParams[key] = value;
+      }
+    });
 
-      // finally send form using EmailJS (sendForm will include attachments[0])
-      const serviceID = 'SERVICE_ID_PLACEHOLDER';
-      const templateID = 'TEMPLATE_ID_PLACEHOLDER';
-      const form = document.getElementById('financingForm');
+    const serviceID = 'Outboard';
+    const templateID = 'Outboard';
 
-      // optional: show loading
-      document.querySelector('.btn').disabled = true;
-      document.querySelector('.btn').textContent = 'Sending...';
-
-      emailjs.sendForm(serviceID, templateID, form)
-        .then(function(){
-          alert('Application submitted & emailed successfully');
-          document.querySelector('.btn').disabled = false;
-          document.querySelector('.btn').textContent = 'Submit & Email PDF';
-          form.reset();
-        }, function(error){
-          alert('Failed to send: ' + JSON.stringify(error));
-          document.querySelector('.btn').disabled = false;
-          document.querySelector('.btn').textContent = 'Submit & Email PDF';
-        });
-
-    }catch(err){
-      alert('Error generating PDF: ' + err);
-    }
+    emailjs.send(serviceID, templateID, templateParams)
+      .then(function(){
+        // Updated Alert Message
+        alert('Application submitted successfully. You will ereceive an email from the team shortly.');
+        
+        btn.disabled = false;
+        btn.textContent = 'Redirecting...';
+        
+        // Redirect to homepage after 3 seconds
+        setTimeout(function() {
+          window.location.href = 'index.html'; // Change '/' to your specific homepage URL if needed
+        }, 2000);
+      }, function(error){
+        alert('Failed to send: ' + JSON.stringify(error));
+        btn.disabled = false;
+        btn.textContent = 'Submit & Email PDF';
+      });
   });
 </script>
 <!--Start of Tawk.to Script-->
